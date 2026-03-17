@@ -1,0 +1,147 @@
+x_train:
+  n_rows: 475355
+  n_cols: 19
+  columns:
+  - gender
+  - SeniorCitizen
+  - Partner
+  - Dependents
+  - tenure
+  - PhoneService
+  - MultipleLines
+  - InternetService
+  - OnlineSecurity
+  - OnlineBackup
+  - DeviceProtection
+  - TechSupport
+  - StreamingTV
+  - StreamingMovies
+  - Contract
+  - PaperlessBilling
+  - PaymentMethod
+  - MonthlyCharges
+  - TotalCharges
+  dtypes:
+    gender: object
+    SeniorCitizen: int64
+    Partner: object
+    Dependents: object
+    tenure: int64
+    PhoneService: object
+    MultipleLines: object
+    InternetService: object
+    OnlineSecurity: object
+    OnlineBackup: object
+    DeviceProtection: object
+    TechSupport: object
+    StreamingTV: object
+    StreamingMovies: object
+    Contract: object
+    PaperlessBilling: object
+    PaymentMethod: object
+    MonthlyCharges: float64
+    TotalCharges: float64
+  target:
+    n_rows: 475355
+    dtype: object
+    unique_values:
+    - 'No'
+    - 'Yes'
+x_val:
+  n_rows: 59419
+  n_cols: 19
+  columns:
+  - gender
+  - SeniorCitizen
+  - Partner
+  - Dependents
+  - tenure
+  - PhoneService
+  - MultipleLines
+  - InternetService
+  - OnlineSecurity
+  - OnlineBackup
+  - DeviceProtection
+  - TechSupport
+  - StreamingTV
+  - StreamingMovies
+  - Contract
+  - PaperlessBilling
+  - PaymentMethod
+  - MonthlyCharges
+  - TotalCharges
+  dtypes:
+    gender: object
+    SeniorCitizen: int64
+    Partner: object
+    Dependents: object
+    tenure: int64
+    PhoneService: object
+    MultipleLines: object
+    InternetService: object
+    OnlineSecurity: object
+    OnlineBackup: object
+    DeviceProtection: object
+    TechSupport: object
+    StreamingTV: object
+    StreamingMovies: object
+    Contract: object
+    PaperlessBilling: object
+    PaymentMethod: object
+    MonthlyCharges: float64
+    TotalCharges: float64
+  target:
+    n_rows: 59419
+    dtype: object
+    unique_values:
+    - 'No'
+    - 'Yes'
+x_test:
+  n_rows: 59420
+  n_cols: 19
+  columns:
+  - gender
+  - SeniorCitizen
+  - Partner
+  - Dependents
+  - tenure
+  - PhoneService
+  - MultipleLines
+  - InternetService
+  - OnlineSecurity
+  - OnlineBackup
+  - DeviceProtection
+  - TechSupport
+  - StreamingTV
+  - StreamingMovies
+  - Contract
+  - PaperlessBilling
+  - PaymentMethod
+  - MonthlyCharges
+  - TotalCharges
+  dtypes:
+    gender: object
+    SeniorCitizen: int64
+    Partner: object
+    Dependents: object
+    tenure: int64
+    PhoneService: object
+    MultipleLines: object
+    InternetService: object
+    OnlineSecurity: object
+    OnlineBackup: object
+    DeviceProtection: object
+    TechSupport: object
+    StreamingTV: object
+    StreamingMovies: object
+    Contract: object
+    PaperlessBilling: object
+    PaymentMethod: object
+    MonthlyCharges: float64
+    TotalCharges: float64
+  target:
+    n_rows: 59420
+    dtype: object
+    unique_values:
+    - 'No'
+    - 'Yes'

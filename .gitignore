@@ -1,0 +1,73 @@
+# python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# virtual environment
+venv/
+env/
+.venv/
+.env/
+
+# build
+dist/
+build/
+*.egg-info/
+*.egg
+
+# jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# ide
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+
+# os
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# data
+data/
+*.csv
+*.xlsx
+*.xls
+*.json
+*.parquet
+*.tsv
+
+# model artifacts
+artifacts/models/*.pkl
+artifacts/models/*.joblib
+artifacts/models/*.h5
+artifacts/models/*.pt
+
+# preprocessing artifacts
+artifacts/preprocessing/*.joblib
+artifacts/preprocessing_fe/*.joblib
+
+# logs
+artifacts/logs/
+*.log
+
+# reports
+artifacts/reports/*.png
+
+# env config
+.env
+*.env
+DL.yml
+
+# images
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp

@@ -1,0 +1,284 @@
+x_train:
+  n_rows: 475355
+  n_cols: 30
+  columns:
+  - Partner_Yes
+  - Dependents_Yes
+  - PhoneService_Yes
+  - MultipleLines_No phone service
+  - MultipleLines_Yes
+  - InternetService_Fiber optic
+  - InternetService_No
+  - OnlineSecurity_No internet service
+  - OnlineSecurity_Yes
+  - OnlineBackup_No internet service
+  - OnlineBackup_Yes
+  - DeviceProtection_No internet service
+  - DeviceProtection_Yes
+  - TechSupport_No internet service
+  - TechSupport_Yes
+  - StreamingTV_No internet service
+  - StreamingTV_Yes
+  - StreamingMovies_No internet service
+  - StreamingMovies_Yes
+  - Contract_One year
+  - Contract_Two year
+  - PaymentMethod_Credit card (automatic)
+  - PaymentMethod_Electronic check
+  - PaymentMethod_Mailed check
+  - Tenure_bucket_1
+  - Tenure_bucket_2
+  - Tenure_bucket_3
+  - Tenure_bucket_4
+  - MonthlyCharges
+  - TotalCharges
+  dtypes:
+    Partner_Yes: float64
+    Dependents_Yes: float64
+    PhoneService_Yes: float64
+    MultipleLines_No phone service: float64
+    MultipleLines_Yes: float64
+    InternetService_Fiber optic: float64
+    InternetService_No: float64
+    OnlineSecurity_No internet service: float64
+    OnlineSecurity_Yes: float64
+    OnlineBackup_No internet service: float64
+    OnlineBackup_Yes: float64
+    DeviceProtection_No internet service: float64
+    DeviceProtection_Yes: float64
+    TechSupport_No internet service: float64
+    TechSupport_Yes: float64
+    StreamingTV_No internet service: float64
+    StreamingTV_Yes: float64
+    StreamingMovies_No internet service: float64
+    StreamingMovies_Yes: float64
+    Contract_One year: float64
+    Contract_Two year: float64
+    PaymentMethod_Credit card (automatic): float64
+    PaymentMethod_Electronic check: float64
+    PaymentMethod_Mailed check: float64
+    Tenure_bucket_1: float64
+    Tenure_bucket_2: float64
+    Tenure_bucket_3: float64
+    Tenure_bucket_4: float64
+    MonthlyCharges: float64
+    TotalCharges: float64
+  target:
+    n_rows: 475355
+    dtype: object
+    unique_values:
+    - 'No'
+    - 'Yes'
+x_train_ros:
+  n_rows: 736602
+  n_cols: 30
+  columns:
+  - Partner_Yes
+  - Dependents_Yes
+  - PhoneService_Yes
+  - MultipleLines_No phone service
+  - MultipleLines_Yes
+  - InternetService_Fiber optic
+  - InternetService_No
+  - OnlineSecurity_No internet service
+  - OnlineSecurity_Yes
+  - OnlineBackup_No internet service
+  - OnlineBackup_Yes
+  - DeviceProtection_No internet service
+  - DeviceProtection_Yes
+  - TechSupport_No internet service
+  - TechSupport_Yes
+  - StreamingTV_No internet service
+  - StreamingTV_Yes
+  - StreamingMovies_No internet service
+  - StreamingMovies_Yes
+  - Contract_One year
+  - Contract_Two year
+  - PaymentMethod_Credit card (automatic)
+  - PaymentMethod_Electronic check
+  - PaymentMethod_Mailed check
+  - Tenure_bucket_1
+  - Tenure_bucket_2
+  - Tenure_bucket_3
+  - Tenure_bucket_4
+  - MonthlyCharges
+  - TotalCharges
+  dtypes:
+    Partner_Yes: float64
+    Dependents_Yes: float64
+    PhoneService_Yes: float64
+    MultipleLines_No phone service: float64
+    MultipleLines_Yes: float64
+    InternetService_Fiber optic: float64
+    InternetService_No: float64
+    OnlineSecurity_No internet service: float64
+    OnlineSecurity_Yes: float64
+    OnlineBackup_No internet service: float64
+    OnlineBackup_Yes: float64
+    DeviceProtection_No internet service: float64
+    DeviceProtection_Yes: float64
+    TechSupport_No internet service: float64
+    TechSupport_Yes: float64
+    StreamingTV_No internet service: float64
+    StreamingTV_Yes: float64
+    StreamingMovies_No internet service: float64
+    StreamingMovies_Yes: float64
+    Contract_One year: float64
+    Contract_Two year: float64
+    PaymentMethod_Credit card (automatic): float64
+    PaymentMethod_Electronic check: float64
+    PaymentMethod_Mailed check: float64
+    Tenure_bucket_1: float64
+    Tenure_bucket_2: float64
+    Tenure_bucket_3: float64
+    Tenure_bucket_4: float64
+    MonthlyCharges: float64
+    TotalCharges: float64
+  target:
+    n_rows: 736602
+    dtype: object
+    unique_values:
+    - 'No'
+    - 'Yes'
+x_val:
+  n_rows: 59419
+  n_cols: 30
+  columns:
+  - Partner_Yes
+  - Dependents_Yes
+  - PhoneService_Yes
+  - MultipleLines_No phone service
+  - MultipleLines_Yes
+  - InternetService_Fiber optic
+  - InternetService_No
+  - OnlineSecurity_No internet service
+  - OnlineSecurity_Yes
+  - OnlineBackup_No internet service
+  - OnlineBackup_Yes
+  - DeviceProtection_No internet service
+  - DeviceProtection_Yes
+  - TechSupport_No internet service
+  - TechSupport_Yes
+  - StreamingTV_No internet service
+  - StreamingTV_Yes
+  - StreamingMovies_No internet service
+  - StreamingMovies_Yes
+  - Contract_One year
+  - Contract_Two year
+  - PaymentMethod_Credit card (automatic)
+  - PaymentMethod_Electronic check
+  - PaymentMethod_Mailed check
+  - Tenure_bucket_1
+  - Tenure_bucket_2
+  - Tenure_bucket_3
+  - Tenure_bucket_4
+  - MonthlyCharges
+  - TotalCharges
+  dtypes:
+    Partner_Yes: float64
+    Dependents_Yes: float64
+    PhoneService_Yes: float64
+    MultipleLines_No phone service: float64
+    MultipleLines_Yes: float64
+    InternetService_Fiber optic: float64
+    InternetService_No: float64
+    OnlineSecurity_No internet service: float64
+    OnlineSecurity_Yes: float64
+    OnlineBackup_No internet service: float64
+    OnlineBackup_Yes: float64
+    DeviceProtection_No internet service: float64
+    DeviceProtection_Yes: float64
+    TechSupport_No internet service: float64
+    TechSupport_Yes: float64
+    StreamingTV_No internet service: float64
+    StreamingTV_Yes: float64
+    StreamingMovies_No internet service: float64
+    StreamingMovies_Yes: float64
+    Contract_One year: float64
+    Contract_Two year: float64
+    PaymentMethod_Credit card (automatic): float64
+    PaymentMethod_Electronic check: float64
+    PaymentMethod_Mailed check: float64
+    Tenure_bucket_1: float64
+    Tenure_bucket_2: float64
+    Tenure_bucket_3: float64
+    Tenure_bucket_4: float64
+    MonthlyCharges: float64
+    TotalCharges: float64
+  target:
+    n_rows: 59419
+    dtype: object
+    unique_values:
+    - 'No'
+    - 'Yes'
+x_test:
+  n_rows: 59420
+  n_cols: 30
+  columns:
+  - Partner_Yes
+  - Dependents_Yes
+  - PhoneService_Yes
+  - MultipleLines_No phone service
+  - MultipleLines_Yes
+  - InternetService_Fiber optic
+  - InternetService_No
+  - OnlineSecurity_No internet service
+  - OnlineSecurity_Yes
+  - OnlineBackup_No internet service
+  - OnlineBackup_Yes
+  - DeviceProtection_No internet service
+  - DeviceProtection_Yes
+  - TechSupport_No internet service
+  - TechSupport_Yes
+  - StreamingTV_No internet service
+  - StreamingTV_Yes
+  - StreamingMovies_No internet service
+  - StreamingMovies_Yes
+  - Contract_One year
+  - Contract_Two year
+  - PaymentMethod_Credit card (automatic)
+  - PaymentMethod_Electronic check
+  - PaymentMethod_Mailed check
+  - Tenure_bucket_1
+  - Tenure_bucket_2
+  - Tenure_bucket_3
+  - Tenure_bucket_4
+  - MonthlyCharges
+  - TotalCharges
+  dtypes:
+    Partner_Yes: float64
+    Dependents_Yes: float64
+    PhoneService_Yes: float64
+    MultipleLines_No phone service: float64
+    MultipleLines_Yes: float64
+    InternetService_Fiber optic: float64
+    InternetService_No: float64
+    OnlineSecurity_No internet service: float64
+    OnlineSecurity_Yes: float64
+    OnlineBackup_No internet service: float64
+    OnlineBackup_Yes: float64
+    DeviceProtection_No internet service: float64
+    DeviceProtection_Yes: float64
+    TechSupport_No internet service: float64
+    TechSupport_Yes: float64
+    StreamingTV_No internet service: float64
+    StreamingTV_Yes: float64
+    StreamingMovies_No internet service: float64
+    StreamingMovies_Yes: float64
+    Contract_One year: float64
+    Contract_Two year: float64
+    PaymentMethod_Credit card (automatic): float64
+    PaymentMethod_Electronic check: float64
+    PaymentMethod_Mailed check: float64
+    Tenure_bucket_1: float64
+    Tenure_bucket_2: float64
+    Tenure_bucket_3: float64
+    Tenure_bucket_4: float64
+    MonthlyCharges: float64
+    TotalCharges: float64
+  target:
+    n_rows: 59420
+    dtype: object
+    unique_values:
+    - 'No'
+    - 'Yes'
