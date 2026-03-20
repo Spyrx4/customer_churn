@@ -5,7 +5,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import numpy as np
-import requests
+import joblib
 import batch_predict
 
 # page config
@@ -387,7 +387,7 @@ with tab_predict:
     st.markdown("---")
     st.markdown(
         '<p style="color:#94a3b8;">Isi data pelanggan di bawah ini, lalu klik <b>Predict</b> '
-        'untuk melihat kemungkinan churn. Pastikan FastAPI backend sudah berjalan.</p>',
+        'untuk melihat kemungkinan churn.</p>',
         unsafe_allow_html=True,
     )
 
@@ -448,35 +448,37 @@ with tab_predict:
 
     # predict
     if st.button("🔮  Predict Churn", use_container_width=True, type="primary"):
-        payload = {
-            "gender": gender,
-            "SeniorCitizen": seniorCtzn,
-            "Partner": partner,
-            "Dependents": dependents,
-            "tenure": tenure,
-            "PhoneService": phoneService,
-            "MultipleLines": multipleLines,
-            "InternetService": internetservice,
-            "OnlineSecurity": onlineSecurity,
-            "OnlineBackup": onlineBackup,
-            "DeviceProtection": deviceProtect,
-            "TechSupport": techSupp,
-            "StreamingTV": streamingTv,
-            "StreamingMovies": streamingMov,
-            "Contract": contract,
-            "PaperlessBilling": paperlessBill,
-            "PaymentMethod": payMeth,
-            "MonthlyCharges": monthCharges,
-            "TotalCharges": totalCharges,
-        }
+        raw = pd.DataFrame([{
+            'gender': gender,
+            'SeniorCitizen': seniorCtzn,
+            'Partner': partner,
+            'Dependents': dependents,
+            'tenure': tenure,
+            'PhoneService': phoneService,
+            'MultipleLines': multipleLines,
+            'InternetService': internetservice,
+            'OnlineSecurity': onlineSecurity,
+            'OnlineBackup': onlineBackup,
+            'DeviceProtection': deviceProtect,
+            'TechSupport': techSupp,
+            'StreamingTV': streamingTv,
+            'StreamingMovies': streamingMov,
+            'Contract': contract,
+            'PaperlessBilling': paperlessBill,
+            'PaymentMethod': payMeth,
+            'MonthlyCharges': monthCharges,
+            'TotalCharges': totalCharges,
+        }])
 
         try:
-            response = requests.post("http://127.0.0.1:8000/predict", json=payload)
-            result = response.json()
-
-            proba = round(result["churn_probability"], 3)
-            risk = result["risk_level"]
-            pred = result["prediction"]
+            predictions, probabilities = batch_predict._batch_inference(raw)
+            pred = int(predictions[0])
+            proba = float(probabilities[0])
+            risk = (
+                "High" if proba >= 0.8 else
+                "Medium" if proba >= 0.5 else
+                "Low"
+            )
 
             risk_css = {"High": "risk-high", "Medium": "risk-medium", "Low": "risk-low"}
 
@@ -534,12 +536,7 @@ with tab_predict:
             st.plotly_chart(fig_gauge, use_container_width=True)
 
         except Exception as e:
-            st.error("⚠️ Tidak dapat terhubung ke FastAPI Backend")
-            st.markdown(
-                '<p style="color:#94a3b8;">Pastikan FastAPI sudah berjalan di '
-                '<code>http://127.0.0.1:8000</code></p>',
-                unsafe_allow_html=True,
-            )
+            st.error("⚠️ Terjadi kesalahan saat prediksi")
             st.code(str(e), language="text")
 
 # tab 3 - batch prediction
