@@ -342,8 +342,8 @@ with tab_dashboard:
             text=[[f"{v:.1%}" for v in row] for row in svc_pivot.values],
             texttemplate="%{text}", textfont=dict(size=13, color="white"),
             hovertemplate="Service: %{y}<br>Status: %{x}<br>Churn Rate: %{text}<extra></extra>",
-            colorbar=dict(title="Churn Rate", tickformat=".0%", bgcolor="rgba(0,0,0,0)",
-                          tickfont=dict(color="#cbd5e1"), titlefont=dict(color="#cbd5e1")),
+            colorbar=dict(title=dict(text="Churn Rate", font=dict(color="#cbd5e1")),
+                          tickformat=".0%", tickfont=dict(color="#cbd5e1")),
         ))
         fig_heatmap.update_layout(**PLOTLY_LAYOUT, height=380,
                                    xaxis_title="Berlangganan Service?", yaxis_title="")
