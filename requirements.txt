@@ -16,3 +16,8 @@ plotly>=5.24.1
 # file format
 openpyxl>=3.1.0
 pyarrow>=18.0.0
+
+# llm / ai agent
+openai>=1.0.0
+chromadb>=0.4.0
+python-dotenv>=1.0.0

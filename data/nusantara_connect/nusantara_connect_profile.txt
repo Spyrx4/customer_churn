@@ -1,0 +1,117 @@
+NUSANTARA CONNECT (PT NUSANTARA KOMUNIKASI TERPADU)
+NusaPredict AI Platform - Project Specification & Knowledge Base
+Version 1.0 | Q2 2024
+
+=================================================
+DOCUMENT INFORMATION
+=================================================
+Product Name: NusaPredict AI Platform
+Version: 1.0
+Release Date: May 20, 2024
+Document Type: Technical Specification & Business Context
+Classification: Internal - Confidential
+Prepared by: Nusantara Connect Data Science Team
+Last Updated: May 22, 2024
+
+=================================================
+1. EXECUTIVE SUMMARY
+=================================================
+
+NusaPredict AI Platform adalah ekosistem analitik prediktif milik Nusantara Connect yang dirancang untuk mengoptimalkan retensi pelanggan dan efisiensi operasional. Platform ini mengintegrasikan data profil pelanggan secara real-time untuk memprediksi risiko Churn (perpindahan pelanggan) dan memberikan rekomendasi tindakan preventif bagi tim pemasaran.
+
+Key Features:
+- Prediksi Churn berbasis Machine Learning (Supervised Learning)
+- Analisis korelasi layanan (Fiber Optic vs DSL vs Tech Support)
+- Sistem skoring risiko pelanggan otomatis
+- Integrasi Knowledge Base untuk Retrieval-Augmented Generation (RAG)
+- Dashboard pemantauan Monthly Charges dan tren Tenure
+
+Target Users:
+- Customer Retention Team
+- Marketing & Sales Department
+- Data Scientists & Analysts
+- Executive Leadership (CDO/CMO)
+
+Industries Served:
+- Telecommunications (Core Business)
+- Digital Entertainment & Streaming
+- Cybersecurity Services
+
+=================================================
+2. CORPORATE PROFILE & SERVICES
+=================================================
+
+2.1 Platform Overview
+Nusantara Connect (PT Nusantara Komunikasi Terpadu) adalah penyedia layanan infrastruktur digital yang berfokus pada konektivitas broadband di seluruh Indonesia.
+
+Main Components:
+1. Layanan Konektivitas
+   - NusaFiber: Layanan internet kecepatan tinggi via Fiber Optik (FTTH) hingga 1 Gbps.
+   - NusaDSL: Broadband via jalur kabel tembaga untuk area rural/sub-urban.
+   - NusaTalk: Layanan telepon tetap (fixed line) dengan fitur Multiple Lines.
+
+2. Layanan Nilai Tambah (VAS)
+   - Online Security: Proteksi real-time dari ancaman siber dan malware.
+   - Online Backup: Penyimpanan cloud terenkripsi khusus pelanggan.
+   - Device Protection: Asuransi perangkat keras (modem/router).
+   - Tech Support: Bantuan teknis prioritas 24/7 dengan jaminan SLA.
+
+3. Hiburan Digital
+   - NusaStream TV & Movies: Platform Video on Demand (VOD) terintegrasi.
+
+=================================================
+3. BUSINESS LOGIC & CONTRACT SPECIFICATIONS
+=================================================
+
+3.1 Contract Tiers
+- Month-to-month: Kontrak fleksibel tanpa penalti pemutusan, biaya standar.
+- One Year Contract: Komitmen 12 bulan, diskon biaya bulanan 10%.
+- Two Year Contract: Komitmen 24 bulan, diskon 20%, gratis instalasi dan perangkat.
+
+3.2 Billing & Payment System
+- Paperless Billing: Kewajiban tagihan digital melalui email/aplikasi NusaMobile.
+- Payment Methods: Electronic Check, Mailed Check, Bank Transfer (Auto), Credit Card (Auto).
+
+=================================================
+4. CHURN ANALYTICS & STRATEGY
+=================================================
+
+4.1 Risk Factors Identification
+Berdasarkan data historis, faktor utama penyebab Churn meliputi:
+- Jenis Kontrak: Pelanggan Month-to-month memiliki risiko 3x lebih tinggi.
+- Metode Pembayaran: Pengguna Electronic Check cenderung lebih fluktuatif.
+- Bundling Layanan: Pelanggan tanpa Tech Support dan Online Security lebih rentan berhenti saat terjadi gangguan teknis.
+
+4.2 Retention Framework
+- Trigger otomatis untuk pelanggan dengan tenure < 6 bulan.
+- Kampanye "Lock-in" untuk migrasi dari kontrak bulanan ke kontrak tahunan.
+- Penawaran bundling VAS (Value Added Services) untuk meningkatkan kepuasan pelanggan.
+
+=================================================
+5. SECURITY & COMPLIANCE
+=================================================
+
+- Enkripsi Data: AES-256 untuk data pribadi pelanggan (PII) di database.
+- Kepatuhan: Selaras dengan Undang-Undang Perlindungan Data Pribadi (UU PDP) Indonesia.
+- Akses Kontrol: Role-Based Access Control (RBAC) ketat untuk data sensitif.
+
+=================================================
+6. SERVICE LEVEL AGREEMENT (SLA)
+=================================================
+
+| Tier | Prediksi Akurasi | Respon Support | Uptime Layanan |
+|------|------------------|----------------|----------------|
+| Business | >80% | <4 Jam | 99.9% |
+| Enterprise | >90% | <1 Jam | 99.99% |
+
+=================================================
+7. FUTURE ROADMAP
+=================================================
+
+Q3 2024: Integrasi Sentiment Analysis dari log interaksi pelanggan.
+Q4 2024: Implementasi Predictive Lifetime Value (LTV).
+2025+: Transformasi menuju Autonomous Customer Experience.
+
+=================================================
+END OF DOCUMENT
+=================================================
