@@ -11,7 +11,7 @@ import batch_predict
 # page config
 st.set_page_config(
     page_title="Customer Churn Dashboard",
-    page_icon="📊",
+    page_icon="cube",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -177,7 +177,7 @@ def load_data():
 df = load_data()
 
 # sidebar filters
-st.sidebar.markdown("## 🎛️ Dashboard Filters")
+st.sidebar.markdown("## Dashboard Filters")
 
 gender_filter = st.sidebar.multiselect(
     "Gender", options=df["gender"].unique(), default=df["gender"].unique()
@@ -222,14 +222,14 @@ PLOTLY_LAYOUT = dict(
 )
 
 # header
-st.markdown("# 📊 Customer Churn Analytics")
+st.markdown("# Customer Churn Analytics")
 st.markdown(
     '<p style="color:#94a3b8; margin-top:-10px;">Dashboard analitik & prediksi churn pelanggan</p>',
     unsafe_allow_html=True,
 )
 
 # tabs
-tab_dashboard, tab_predict, tab_batch, tab_agent = st.tabs(["📊 Dashboard Analytics", "🔮 Prediksi Churn", "📂 Batch Prediction", "🤖 AI Consultant"])
+tab_dashboard, tab_predict, tab_batch, tab_agent = st.tabs(["Dashboard Analytics", "Prediksi Churn", "Batch Prediction", "AI Consultant"])
 
 # tab 1 - analytics
 with tab_dashboard:
@@ -252,11 +252,49 @@ with tab_dashboard:
 
     st.markdown("---")
 
+    # top churn drivers
+    st.markdown('<p class="dashboard-subheader">Top Churn Drivers</p>', unsafe_allow_html=True)
+    if churn_count > 0:
+        def get_highest_churn(col_name):
+            return filtered.groupby(col_name)["Churn"].apply(lambda x: (x == "Yes").mean()).idxmax(), \
+                   filtered.groupby(col_name)["Churn"].apply(lambda x: (x == "Yes").mean()).max()
+
+        h_contract, p_contract = get_highest_churn("Contract")
+        h_pay, p_pay = get_highest_churn("PaymentMethod")
+        h_inet, p_inet = get_highest_churn("InternetService")
+
+        c1, c2, c3 = st.columns(3)
+        c1.info(f"**Contract:** {h_contract} ({p_contract:.1%})")
+        c2.info(f"**Payment:** {h_pay} ({p_pay:.1%})")
+        c3.info(f"**Internet:** {h_inet} ({p_inet:.1%})")
+        
+        st.markdown("<br>", unsafe_allow_html=True)
+        if st.button("Generate Strategic Recommendations", type="primary", use_container_width=True):
+            with st.spinner("AI Consultant sedang menyusun strategi..."):
+                from llm.agent import run_agent
+                prompt = (
+                    f"Berdasarkan data saat ini, faktor penyebab churn tertinggi adalah: "
+                    f"Contract: {h_contract} ({p_contract:.1%}), Payment Method: {h_pay} ({p_pay:.1%}), "
+                    f"dan Internet Service: {h_inet} ({p_inet:.1%}). "
+                    f"Berikan rekomendasi strategis bisnis tingkat makro untuk menekan churn pada kelompok ini. "
+                    f"Format dalam poin-poin yang profesional tanpa emoji."
+                )
+                try:
+                    ai_response, _ = run_agent(prompt, [])
+                    st.success("Strategi Berhasil Dibuat!")
+                    st.markdown(ai_response)
+                except Exception as e:
+                    st.error(f"Gagal memuat rekomendasi: {e}")
+    else:
+        st.info("No churn data available for current filter.")
+
+    st.markdown("---")
+
     # churn distribution + contract
     col1, col2 = st.columns(2)
 
     with col1:
-        st.markdown('<p class="dashboard-subheader">📌 Distribusi Churn</p>', unsafe_allow_html=True)
+        st.markdown('<p class="dashboard-subheader">Distribusi Churn</p>', unsafe_allow_html=True)
         churn_dist = filtered["Churn"].value_counts().reset_index()
         churn_dist.columns = ["Churn", "Count"]
         fig_donut = px.pie(
@@ -277,7 +315,7 @@ with tab_dashboard:
         st.plotly_chart(fig_donut, use_container_width=True)
 
     with col2:
-        st.markdown('<p class="dashboard-subheader">📋 Churn Rate by Contract Type</p>', unsafe_allow_html=True)
+        st.markdown('<p class="dashboard-subheader">Churn Rate by Contract Type</p>', unsafe_allow_html=True)
         contract_churn = (
             filtered.groupby("Contract")["Churn"]
             .value_counts(normalize=True).rename("Proportion").reset_index()
@@ -296,7 +334,7 @@ with tab_dashboard:
     col3, col4 = st.columns(2)
 
     with col3:
-        st.markdown('<p class="dashboard-subheader">🌐 Churn by Internet Service</p>', unsafe_allow_html=True)
+        st.markdown('<p class="dashboard-subheader">Churn by Internet Service</p>', unsafe_allow_html=True)
         inet_churn = (
             filtered.groupby("InternetService")["Churn"]
             .value_counts(normalize=True).rename("Proportion").reset_index()
@@ -312,7 +350,7 @@ with tab_dashboard:
         st.plotly_chart(fig_inet, use_container_width=True)
 
     with col4:
-        st.markdown('<p class="dashboard-subheader">💳 Churn by Payment Method</p>', unsafe_allow_html=True)
+        st.markdown('<p class="dashboard-subheader">Churn by Payment Method</p>', unsafe_allow_html=True)
         pay_churn = (
             filtered.groupby("PaymentMethod")["Churn"]
             .apply(lambda x: (x == "Yes").mean())
@@ -336,17 +374,30 @@ with tab_dashboard:
     col5, col6 = st.columns(2)
 
     with col5:
-        st.markdown('<p class="dashboard-subheader">⏳ Distribusi Tenure by Churn</p>', unsafe_allow_html=True)
-        fig_tenure = px.histogram(
-            filtered, x="tenure", color="Churn", nbins=36,
-            barmode="overlay", color_discrete_map=CHURN_COLORS, opacity=0.75,
+        st.markdown('<p class="dashboard-subheader">Tenure Cohorts vs Churn</p>', unsafe_allow_html=True)
+        
+        bins = [-1, 12, 36, 60, 1000]
+        labels = ["New (0-1 yr)", "Regular (1-3 yrs)", "Loyal (3-5 yrs)", "Very Loyal (>5 yrs)"]
+        filtered_cohorts = filtered.copy()
+        filtered_cohorts["TenureGroup"] = pd.cut(filtered_cohorts["tenure"], bins=bins, labels=labels)
+        
+        cohort_churn = (
+            filtered_cohorts.groupby("TenureGroup", observed=False)["Churn"]
+            .value_counts(normalize=True).rename("Proportion").reset_index()
         )
-        fig_tenure.update_layout(**PLOTLY_LAYOUT, height=380,
-                                  xaxis_title="Tenure (bulan)", yaxis_title="Jumlah Customer")
+        
+        fig_tenure = px.bar(
+            cohort_churn, x="TenureGroup", y="Proportion", color="Churn",
+            barmode="group", color_discrete_map=CHURN_COLORS,
+            text=cohort_churn["Proportion"].apply(lambda x: f"{x:.1%}") if not cohort_churn.empty else None
+        )
+        fig_tenure.update_traces(textposition="outside", textfont_size=11)
+        fig_tenure.update_layout(**PLOTLY_LAYOUT, height=380, yaxis_tickformat=".0%",
+                                  xaxis_title="", yaxis_title="Proporsi")
         st.plotly_chart(fig_tenure, use_container_width=True)
 
     with col6:
-        st.markdown('<p class="dashboard-subheader">💰 Monthly Charges by Churn</p>', unsafe_allow_html=True)
+        st.markdown('<p class="dashboard-subheader">Monthly Charges by Churn</p>', unsafe_allow_html=True)
         fig_box = px.box(
             filtered, x="Churn", y="MonthlyCharges", color="Churn",
             color_discrete_map=CHURN_COLORS,
@@ -359,7 +410,7 @@ with tab_dashboard:
     col7, col8 = st.columns(2)
 
     with col7:
-        st.markdown('<p class="dashboard-subheader">🔥 Churn Rate per Add-on Service</p>', unsafe_allow_html=True)
+        st.markdown('<p class="dashboard-subheader">Churn Rate per Add-on Service</p>', unsafe_allow_html=True)
         services = [
             "OnlineSecurity", "OnlineBackup", "DeviceProtection",
             "TechSupport", "StreamingTV", "StreamingMovies",
@@ -392,7 +443,7 @@ with tab_dashboard:
         st.plotly_chart(fig_heatmap, use_container_width=True)
 
     with col8:
-        st.markdown('<p class="dashboard-subheader">👴 Senior Citizen vs Churn</p>', unsafe_allow_html=True)
+        st.markdown('<p class="dashboard-subheader">Senior Citizen vs Churn</p>', unsafe_allow_html=True)
         senior_churn = (
             filtered.groupby("SeniorCitizen")["Churn"]
             .value_counts(normalize=True).rename("Proportion").reset_index()
@@ -411,7 +462,7 @@ with tab_dashboard:
     st.markdown("---")
 
     # scatter plot
-    st.markdown('<p class="dashboard-subheader">📈 Tenure vs Total Charges (Sampled)</p>', unsafe_allow_html=True)
+    st.markdown('<p class="dashboard-subheader">Tenure vs Total Charges (Sampled)</p>', unsafe_allow_html=True)
     sample_size = min(5000, len(filtered))
     sampled = filtered.sample(n=sample_size, random_state=42)
     fig_scatter = px.scatter(
@@ -422,6 +473,8 @@ with tab_dashboard:
     fig_scatter.update_layout(**PLOTLY_LAYOUT, height=450,
                                xaxis_title="Tenure (bulan)", yaxis_title="Total Charges ($)")
     st.plotly_chart(fig_scatter, use_container_width=True)
+
+
 
 
 # tab 2 - churn prediction
@@ -436,7 +489,7 @@ with tab_predict:
     yes_no = ["Yes", "No"]
 
     # customer profile
-    st.markdown("### 👤 Customer Profile")
+    st.markdown("### Customer Profile")
     cp1, cp2, cp3, cp4, cp5 = st.columns(5)
     with cp1:
         gender = st.selectbox("Gender", ["Male", "Female"], key="pred_gender")
@@ -452,7 +505,7 @@ with tab_predict:
         tenure = st.slider("Tenure (bulan)", 0, 72, 12, key="pred_tenure")
 
     # services
-    st.markdown("### 📡 Services")
+    st.markdown("### Services")
     sv1, sv2, sv3 = st.columns(3)
     with sv1:
         phoneService = st.selectbox("Phone Service", yes_no, key="pred_phone")
@@ -468,7 +521,7 @@ with tab_predict:
         streamingMov = st.selectbox("Streaming Movies", ["No", "Yes", "No internet service"], key="pred_mov")
 
     # contract & payment
-    st.markdown("### 💳 Contract & Payment")
+    st.markdown("### Contract & Payment")
     py1, py2, py3, py4 = st.columns(4)
     with py1:
         contract = st.selectbox("Contract", ["Month-to-month", "One year", "Two year"], key="pred_contract")
@@ -489,7 +542,7 @@ with tab_predict:
     st.markdown("---")
 
     # predict
-    if st.button("🔮  Predict Churn", use_container_width=True, type="primary"):
+    if st.button(" Predict Churn", use_container_width=True, type="primary"):
         raw = pd.DataFrame([{
             'gender': gender,
             'SeniorCitizen': seniorCtzn,
@@ -525,7 +578,7 @@ with tab_predict:
             risk_css = {"High": "risk-high", "Medium": "risk-medium", "Low": "risk-low"}
 
             st.markdown("---")
-            st.markdown("### 📋 Hasil Prediksi")
+            st.markdown("### Hasil Prediksi")
 
             r1, r2, r3 = st.columns(3)
             with r1:
@@ -577,8 +630,29 @@ with tab_predict:
             fig_gauge.update_layout(**PLOTLY_LAYOUT, height=320)
             st.plotly_chart(fig_gauge, use_container_width=True)
 
+            # AI Recommendation for individual customer
+            st.markdown("---")
+            st.markdown("### Rekomendasi Tindakan (Prescriptive Analytics)")
+            with st.spinner("Menghasilkan rekomendasi retensi personal..."):
+                from llm.agent import run_agent
+                profile_str = (
+                    f"Contract: {contract}, Tenure: {tenure} bulan, Monthly Charges: ${monthCharges}, "
+                    f"Internet Service: {internetservice}, Tech Support: {techSupp}, Payment: {payMeth}"
+                )
+                prompt = (
+                    f"Customer dengan profil berikut diprediksi memiliki probabilitas churn {proba:.1%} (Risiko {risk}).\n"
+                    f"Profil: {profile_str}\n"
+                    f"Berikan rekomendasi tindakan spesifik dan personal untuk agen customer service agar dapat mencegah churn pada customer ini. "
+                    f"Format respons profesional tanpa emoji."
+                )
+                try:
+                    ai_recommendation, _ = run_agent(prompt, [])
+                    st.info(ai_recommendation)
+                except Exception as e:
+                    st.error(f"Terjadi kesalahan saat memuat rekomendasi AI: {e}")
+
         except Exception as e:
-            st.error("⚠️ Terjadi kesalahan saat prediksi")
+            st.error("Terjadi kesalahan saat prediksi")
             st.code(str(e), language="text")
 
 # tab 3 - batch prediction
@@ -592,14 +666,14 @@ with tab_agent:
     # greeting
     st.markdown(
         '<div class="agent-greeting">'
-        '<h3>🤖 Rini — AI Business Consultant</h3>'
+        '<h3>Rini — AI Business Consultant</h3>'
         '<p>Halo! Saya <b>Rini</b>, AI Business Consultant Nusantara Connect. '
         'Saya bisa membantu Anda:</p>'
         '<p>'
-        '🔍 <b>Menjawab pertanyaan</b> tentang perusahaan &amp; layanan<br>'
-        '🔮 <b>Memprediksi churn</b> pelanggan secara langsung<br>'
-        '📊 <b>Menganalisis data</b> pelanggan (594K records)<br>'
-        '📈 <b>Membuat visualisasi</b> chart interaktif'
+        '<b>Menjawab pertanyaan</b> tentang perusahaan &amp; layanan<br>'
+        '<b>Memprediksi churn</b> pelanggan secara langsung<br>'
+        '<b>Menganalisis data</b> pelanggan (594K records)<br>'
+        '<b>Membuat visualisasi</b> chart interaktif'
         '</p>'
         '</div>',
         unsafe_allow_html=True,
@@ -612,7 +686,7 @@ with tab_agent:
         st.session_state["agent_llm_history"] = []  # clean role/content for API
 
     # quick prompts
-    st.markdown('<p style="color:#64748b; font-size:13px; margin-bottom:4px;">💡 Contoh pertanyaan:</p>', unsafe_allow_html=True)
+    st.markdown('<p style="color:#64748b; font-size:13px; margin-bottom:4px;">Contoh pertanyaan:</p>', unsafe_allow_html=True)
     qp_cols = st.columns(4)
     quick_prompts = [
         "Berapa churn rate pelanggan Fiber optic?",
@@ -632,7 +706,7 @@ with tab_agent:
 
     # render chat history
     for msg in st.session_state["agent_history"]:
-        with st.chat_message(msg["role"], avatar="🤖" if msg["role"] == "assistant" else "👤"):
+        with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
             # render charts if present
             if msg.get("charts"):
@@ -649,12 +723,12 @@ with tab_agent:
     if user_input:
         # display user message
         st.session_state["agent_history"].append({"role": "user", "content": user_input})
-        with st.chat_message("user", avatar="👤"):
+        with st.chat_message("user"):
             st.markdown(user_input)
 
         # call agent
-        with st.chat_message("assistant", avatar="🤖"):
-            with st.spinner("🔄 Rini sedang berpikir..."):
+        with st.chat_message("assistant"):
+            with st.spinner("Rini sedang berpikir..."):
                 try:
                     from llm.agent import run_agent
                     response_text, charts = run_agent(
@@ -662,7 +736,7 @@ with tab_agent:
                         st.session_state["agent_llm_history"],
                     )
                 except Exception as e:
-                    response_text = f"⚠️ Terjadi kesalahan: {e}"
+                    response_text = f"Terjadi kesalahan: {e}"
                     charts = []
 
             st.markdown(response_text)
@@ -688,7 +762,7 @@ with tab_agent:
     # clear chat button
     if st.session_state["agent_history"]:
         st.markdown("---")
-        if st.button("🗑️ Clear Chat", key="clear_agent_chat", use_container_width=True):
+        if st.button("Clear Chat", key="clear_agent_chat", use_container_width=True):
             st.session_state["agent_history"] = []
             st.session_state["agent_llm_history"] = []
             st.rerun()
