@@ -107,7 +107,6 @@ def add_csv_to_db(file_path, batch_size=100):
         batch_metadatas.append({"source": os.path.basename(file_path), "type": "customer_data"})
 
     collections.add(documents=batch_chunks, ids=batch_ids, metadatas=batch_metadatas)
-    print(f"Berhasil menambahkan batch CSV: {i} sampai {i + len(batch_df)}")
 
 def search(query, n_result=3, relevance_threshold=1.3):
     """Search the knowledge base with relevance filtering.
@@ -177,6 +176,5 @@ def cosine_similarity(vector1, vector2):
     return similarity
 
 if collections.count() == 0:
-    print('Database kosong, menambahkan dokumen')
     add_docs_to_db(os.path.join(_DATA_DIR, 'nusantara_connect'))
     add_csv_to_db(os.path.join(_DATA_DIR, 'train.csv'))

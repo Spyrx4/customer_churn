@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
+import plotly.express as px
 
 def render_prediction():
     st.markdown("---")
@@ -113,6 +114,35 @@ def render_prediction():
             fig_gauge.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font=dict(color="#cbd5e1"), height=320)
             st.plotly_chart(fig_gauge, use_container_width=True)
 
+            # Explainable AI (SHAP)
+            st.markdown("---")
+            st.markdown("### Mengapa Pelanggan Ini Diprediksi Demikian? (Explainable AI)")
+            try:
+                from utils.ml_utils import explain_prediction
+                with st.spinner("Menghitung kontribusi faktor dengan SHAP..."):
+                    shap_df = explain_prediction(raw_df)
+                    if shap_df is not None:
+                        # Ambil 5 fitur teratas berdasarkan absolut SHAP value
+                        shap_df["Abs_SHAP"] = shap_df["SHAP Value"].abs()
+                        top_shap = shap_df.sort_values(by="Abs_SHAP", ascending=False).head(5)
+                        top_shap = top_shap.sort_values(by="Abs_SHAP", ascending=True) # Urutkan ascending untuk visualisasi horizontal
+                        
+                        fig_shap = px.bar(
+                            top_shap,
+                            x="SHAP Value",
+                            y="Feature",
+                            orientation="h",
+                            color="SHAP Value",
+                            color_continuous_scale=["#34d399", "#6366f1", "#f43f5e"],
+                            title="Top 5 Faktor Penentu (SHAP Values)",
+                        )
+                        fig_shap.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font=dict(color="#cbd5e1"), coloraxis_showscale=False, height=300)
+                        st.plotly_chart(fig_shap, use_container_width=True)
+                    else:
+                        st.info("Penjelasan model (SHAP) tidak tersedia saat ini.")
+            except Exception as e:
+                st.warning(f"Gagal memuat Explainable AI: {e}")
+
             # AI Recommendation for individual customer
             st.markdown("---")
             st.markdown("### Rekomendasi Tindakan (AI Prescriptive Analytics)")
@@ -133,6 +163,12 @@ def render_prediction():
                     st.info(ai_recommendation)
                 except Exception as e:
                     st.error(f"Terjadi kesalahan saat memuat rekomendasi AI: {e}")
+
+            # Bridge to Simulator
+            st.markdown("---")
+            if st.button("Analyze in Simulator", use_container_width=True):
+                st.session_state["sim_data"] = payload
+                st.success("Data tersimpan! Silakan klik tab 'Analytics & Simulator' di atas untuk memulai simulasi.")
 
         except Exception as e:
             st.error(f"Terjadi kesalahan saat memprediksi churn")

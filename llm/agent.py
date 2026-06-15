@@ -15,11 +15,17 @@ import plotly.express as px
 import plotly.graph_objects as go
 from openai import OpenAI
 from dotenv import load_dotenv
+import streamlit as st
 
 load_dotenv()
 
 # ---------- OpenAI client ----------
-_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+try:
+    api_key = st.secrets["OPENAI_API_KEY"]
+except Exception:
+    api_key = os.getenv("OPENAI_API_KEY")
+
+_client = OpenAI(api_key=api_key)
 
 # ---------- lazy-loaded resources ----------
 _df_cache = None

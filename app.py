@@ -14,6 +14,10 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+if "sim_data" not in st.session_state:
+    st.session_state["sim_data"] = {}
+
+
 # Custom styling
 st.markdown("""
 <style>
