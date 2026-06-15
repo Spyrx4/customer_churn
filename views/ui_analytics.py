@@ -52,7 +52,7 @@ def render_analytics(filtered, churn_rate):
         c3.info(f"**Internet:** {h_inet} ({p_inet:.1%})")
         
         st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("Generate Strategic Recommendations", type="primary", use_container_width=True):
+        if st.button("Generate Strategic Recommendations", type="primary", width='stretch'):
             with st.spinner("AI Consultant sedang menyusun strategi..."):
                 from llm.agent import run_agent
                 prompt = (
@@ -95,7 +95,7 @@ def render_analytics(filtered, churn_rate):
                 x=0.5, y=0.5, font_size=18, font_color="#f43f5e", showarrow=False,
             )],
         )
-        st.plotly_chart(fig_donut, use_container_width=True)
+        st.plotly_chart(fig_donut, width='stretch')
 
     with col2:
         st.markdown('<p class="dashboard-subheader">Churn Rate by Contract Type</p>', unsafe_allow_html=True)
@@ -111,7 +111,7 @@ def render_analytics(filtered, churn_rate):
         fig_contract.update_traces(textposition="outside", textfont_size=11)
         fig_contract.update_layout(**PLOTLY_LAYOUT, height=380, yaxis_tickformat=".0%",
                                     xaxis_title="", yaxis_title="Proporsi")
-        st.plotly_chart(fig_contract, use_container_width=True)
+        st.plotly_chart(fig_contract, width='stretch')
 
     # internet service + payment method
     col3, col4 = st.columns(2)
@@ -130,7 +130,7 @@ def render_analytics(filtered, churn_rate):
         fig_inet.update_traces(textposition="inside", textfont_size=11)
         fig_inet.update_layout(**PLOTLY_LAYOUT, height=380, yaxis_tickformat=".0%",
                                 xaxis_title="", yaxis_title="Proporsi")
-        st.plotly_chart(fig_inet, use_container_width=True)
+        st.plotly_chart(fig_inet, width='stretch')
 
     with col4:
         st.markdown('<p class="dashboard-subheader">Churn by Payment Method</p>', unsafe_allow_html=True)
@@ -149,7 +149,7 @@ def render_analytics(filtered, churn_rate):
         fig_pay.update_layout(**PLOTLY_LAYOUT, height=380, xaxis_tickformat=".0%",
                                xaxis_title="Churn Rate", yaxis_title="",
                                coloraxis_showscale=False)
-        st.plotly_chart(fig_pay, use_container_width=True)
+        st.plotly_chart(fig_pay, width='stretch')
 
     st.markdown("---")
 
@@ -177,7 +177,7 @@ def render_analytics(filtered, churn_rate):
         fig_tenure.update_traces(textposition="outside", textfont_size=11)
         fig_tenure.update_layout(**PLOTLY_LAYOUT, height=380, yaxis_tickformat=".0%",
                                   xaxis_title="", yaxis_title="Proporsi")
-        st.plotly_chart(fig_tenure, use_container_width=True)
+        st.plotly_chart(fig_tenure, width='stretch')
 
     with col6:
         st.markdown('<p class="dashboard-subheader">Monthly Charges by Churn</p>', unsafe_allow_html=True)
@@ -187,7 +187,7 @@ def render_analytics(filtered, churn_rate):
         )
         fig_box.update_layout(**PLOTLY_LAYOUT, height=380, showlegend=False,
                                xaxis_title="", yaxis_title="Monthly Charges ($)")
-        st.plotly_chart(fig_box, use_container_width=True)
+        st.plotly_chart(fig_box, width='stretch')
 
     # heatmap + senior citizen
     col7, col8 = st.columns(2)
@@ -223,7 +223,7 @@ def render_analytics(filtered, churn_rate):
         ))
         fig_heatmap.update_layout(**PLOTLY_LAYOUT, height=380,
                                    xaxis_title="Berlangganan Service?", yaxis_title="")
-        st.plotly_chart(fig_heatmap, use_container_width=True)
+        st.plotly_chart(fig_heatmap, width='stretch')
 
     with col8:
         st.markdown('<p class="dashboard-subheader">Senior Citizen vs Churn</p>', unsafe_allow_html=True)
@@ -240,7 +240,7 @@ def render_analytics(filtered, churn_rate):
         fig_senior.update_traces(textposition="outside", textfont_size=12)
         fig_senior.update_layout(**PLOTLY_LAYOUT, height=380, yaxis_tickformat=".0%",
                                   xaxis_title="", yaxis_title="Proporsi")
-        st.plotly_chart(fig_senior, use_container_width=True)
+        st.plotly_chart(fig_senior, width='stretch')
 
     st.markdown("---")
 
@@ -255,4 +255,4 @@ def render_analytics(filtered, churn_rate):
     )
     fig_scatter.update_layout(**PLOTLY_LAYOUT, height=450,
                                xaxis_title="Tenure (bulan)", yaxis_title="Total Charges ($)")
-    st.plotly_chart(fig_scatter, use_container_width=True)
+    st.plotly_chart(fig_scatter, width='stretch')

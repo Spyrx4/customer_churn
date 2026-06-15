@@ -38,7 +38,7 @@ def render_agent():
     for i, qp in enumerate(quick_prompts):
         with qp_cols[i]:
             st.markdown('<div class="quick-prompt-btn">', unsafe_allow_html=True)
-            if st.button(qp, key=f"qp_{i}", use_container_width=True):
+            if st.button(qp, key=f"qp_{i}", width='stretch'):
                 selected_prompt = qp
             st.markdown('</div>', unsafe_allow_html=True)
 
@@ -51,7 +51,7 @@ def render_agent():
             # render charts if present
             if msg.get("charts"):
                 for fig in msg["charts"]:
-                    st.plotly_chart(fig, use_container_width=True)
+                    st.plotly_chart(fig, width='stretch')
 
     # chat input
     user_input = st.chat_input("Tanya Rini tentang data, prediksi, atau analisis...", key="agent_chat_input")
@@ -81,7 +81,7 @@ def render_agent():
 
             st.markdown(response_text)
             for fig in charts:
-                st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig, width='stretch')
 
         # save to history
         st.session_state["agent_history"].append({
@@ -102,7 +102,7 @@ def render_agent():
     # clear chat button
     if st.session_state["agent_history"]:
         st.markdown("---")
-        if st.button("Clear Chat", key="clear_agent_chat", use_container_width=True):
+        if st.button("Clear Chat", key="clear_agent_chat", width='stretch'):
             st.session_state["agent_history"] = []
             st.session_state["agent_llm_history"] = []
             st.rerun()

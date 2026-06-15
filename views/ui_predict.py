@@ -46,7 +46,7 @@ def render_prediction():
 
     st.markdown("---")
 
-    if st.button("Predict Churn", use_container_width=True, type="primary"):
+    if st.button("Predict Churn", width='stretch', type="primary"):
         # Payload prediksi
         payload = {
             "gender": gender,
@@ -112,7 +112,7 @@ def render_prediction():
                 )
             ))
             fig_gauge.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font=dict(color="#cbd5e1"), height=320)
-            st.plotly_chart(fig_gauge, use_container_width=True)
+            st.plotly_chart(fig_gauge, width='stretch')
 
             # Explainable AI (SHAP)
             st.markdown("---")
@@ -137,7 +137,7 @@ def render_prediction():
                             title="Top 5 Faktor Penentu (SHAP Values)",
                         )
                         fig_shap.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font=dict(color="#cbd5e1"), coloraxis_showscale=False, height=300)
-                        st.plotly_chart(fig_shap, use_container_width=True)
+                        st.plotly_chart(fig_shap, width='stretch')
                     else:
                         st.info("Penjelasan model (SHAP) tidak tersedia saat ini.")
             except Exception as e:
@@ -166,7 +166,7 @@ def render_prediction():
 
             # Bridge to Simulator
             st.markdown("---")
-            if st.button("Analyze in Simulator", use_container_width=True):
+            if st.button("Analyze in Simulator", width='stretch'):
                 st.session_state["sim_data"] = payload
                 st.success("Data tersimpan! Silakan klik tab 'Analytics & Simulator' di atas untuk memulai simulasi.")
 

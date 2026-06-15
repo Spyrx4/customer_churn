@@ -30,14 +30,14 @@ def inject_simulator():
 
     with col_presets:
         st.write("Strategy Presets")
-        if st.button("Promo Paket Hemat", use_container_width=True, help="Diskon 20% Monthly Charges"):
+        if st.button("Promo Paket Hemat", width='stretch', help="Diskon 20% Monthly Charges"):
             st.session_state["sim_promo_hemat"] = True
-        if st.button("Loyalty Lock", use_container_width=True, help="Ubah kontrak ke Two Year"):
+        if st.button("Loyalty Lock", width='stretch', help="Ubah kontrak ke Two Year"):
             st.session_state["sim_loyalty_lock"] = True
-        if st.button("Tech-Security Bundle", use_container_width=True, help="Aktifkan Tech Support & Online Security"):
+        if st.button("Tech-Security Bundle", width='stretch', help="Aktifkan Tech Support & Online Security"):
             st.session_state["sim_tech_sec"] = True
             
-        if st.button("Reset Simulator", type="secondary", use_container_width=True):
+        if st.button("Reset Simulator", type="secondary", width='stretch'):
             st.session_state.pop("sim_promo_hemat", None)
             st.session_state.pop("sim_loyalty_lock", None)
             st.session_state.pop("sim_tech_sec", None)

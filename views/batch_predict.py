@@ -115,11 +115,11 @@ def render():
             f'{len(raw_df):,} baris &bull; {len(raw_df.columns)} kolom</p>',
             unsafe_allow_html=True,
         )
-        st.dataframe(raw_df.head(10), use_container_width=True)
+        st.dataframe(raw_df.head(10), width='stretch')
         st.markdown("---")
 
         # predict
-        if st.button("Jalankan Prediksi", use_container_width=True, type="primary", key="batch_btn"):
+        if st.button("Jalankan Prediksi", width='stretch', type="primary", key="batch_btn"):
             with st.spinner("Memproses prediksi..."):
                 feature_df = raw_df[REQUIRED_FEATURE_COLS].copy()
                 try:
@@ -228,10 +228,10 @@ def _render_results(result_df: pd.DataFrame):
             styled = display_df.style.apply(highlight_churn, axis=1).format(
                 {"Churn_Probability": "{:.2%}"}
             )
-            st.dataframe(styled, use_container_width=True, height=500)
+            st.dataframe(styled, width='stretch', height=500)
         else:
             st.info(f"Data terlalu besar untuk styling ({len(display_df):,} baris). Menampilkan tabel biasa.")
-            st.dataframe(display_df, use_container_width=True, height=500)
+            st.dataframe(display_df, width='stretch', height=500)
 
         st.markdown("---")
         dl1, dl2, dl3 = st.columns(3)
@@ -240,21 +240,21 @@ def _render_results(result_df: pd.DataFrame):
                 "Download CSV",
                 data=result_df.to_csv(index=False).encode("utf-8"),
                 file_name="churn_predictions.csv", mime="text/csv",
-                use_container_width=True, key="dl_csv",
+                width='stretch', key="dl_csv",
             )
         with dl2:
             st.download_button(
                 "Download JSON",
                 data=result_df.to_json(orient="records", indent=2).encode("utf-8"),
                 file_name="churn_predictions.json", mime="application/json",
-                use_container_width=True, key="dl_json",
+                width='stretch', key="dl_json",
             )
         with dl3:
             st.download_button(
                 "Download Parquet",
                 data=result_df.to_parquet(index=False),
                 file_name="churn_predictions.parquet", mime="application/octet-stream",
-                use_container_width=True, key="dl_parquet",
+                width='stretch', key="dl_parquet",
             )
 
     # visualization
@@ -279,7 +279,7 @@ def _render_results(result_df: pd.DataFrame):
                     x=0.5, y=0.5, font_size=18, font_color="#f43f5e", showarrow=False,
                 )],
             )
-            st.plotly_chart(fig_pie, use_container_width=True)
+            st.plotly_chart(fig_pie, width='stretch')
 
         with v2:
             st.markdown('<p class="dashboard-subheader">️ Distribusi Risk Level</p>', unsafe_allow_html=True)
@@ -296,7 +296,7 @@ def _render_results(result_df: pd.DataFrame):
             fig_risk.update_traces(textposition="outside", textfont_size=13)
             fig_risk.update_layout(**PLOTLY_LAYOUT, height=380, showlegend=False,
                                     xaxis_title="", yaxis_title="Jumlah")
-            st.plotly_chart(fig_risk, use_container_width=True)
+            st.plotly_chart(fig_risk, width='stretch')
 
         v3, v4 = st.columns(2)
         with v3:
@@ -313,7 +313,7 @@ def _render_results(result_df: pd.DataFrame):
             fig_hist.update_layout(**PLOTLY_LAYOUT, height=380,
                                     xaxis_title="Churn Probability", yaxis_title="Jumlah",
                                     xaxis_tickformat=".0%")
-            st.plotly_chart(fig_hist, use_container_width=True)
+            st.plotly_chart(fig_hist, width='stretch')
 
         with v4:
             st.markdown('<p class="dashboard-subheader"> Top 10 Pelanggan Berisiko Tinggi</p>', unsafe_allow_html=True)
@@ -332,7 +332,7 @@ def _render_results(result_df: pd.DataFrame):
                 xaxis_tickformat=".0%", coloraxis_showscale=False,
                 yaxis=dict(autorange="reversed"),
             )
-            st.plotly_chart(fig_top, use_container_width=True)
+            st.plotly_chart(fig_top, width='stretch')
 
         st.markdown('<p class="dashboard-subheader"> Prediksi Churn by Contract Type</p>', unsafe_allow_html=True)
         ct_dist = (
@@ -347,4 +347,4 @@ def _render_results(result_df: pd.DataFrame):
         fig_ct.update_traces(textposition="outside", textfont_size=11)
         fig_ct.update_layout(**PLOTLY_LAYOUT, height=380, yaxis_tickformat=".0%",
                               xaxis_title="", yaxis_title="Proporsi")
-        st.plotly_chart(fig_ct, use_container_width=True)
+        st.plotly_chart(fig_ct, width='stretch')
