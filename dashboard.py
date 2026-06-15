@@ -7,6 +7,7 @@ import plotly.graph_objects as go
 import numpy as np
 import joblib
 import batch_predict
+from simulator import inject_simulator
 
 # page config
 st.set_page_config(
@@ -234,6 +235,14 @@ tab_dashboard, tab_predict, tab_batch, tab_agent = st.tabs(["Dashboard Analytics
 # tab 1 - analytics
 with tab_dashboard:
     st.markdown("---")
+
+    # load model for simulator
+    try:
+        model_sim = joblib.load("artifacts/models/churn_model.pkl")
+        preprocess_sim = joblib.load("artifacts/preprocessing_fe/preprocessor.pkl")
+        inject_simulator(model_sim, preprocess_sim)
+    except Exception as e:
+        st.error(f"Gagal memuat model simulator: {e}")
 
     # kpi
     churn_count = (filtered["Churn"] == "Yes").sum()
