@@ -20,9 +20,9 @@ def render_agent():
     )
 
     # session state init
-    if "agent_history" not in st.session_state:
+    if "agent_history"not in st.session_state:
         st.session_state["agent_history"] = []  # [{role, content, charts?}]
-    if "agent_llm_history" not in st.session_state:
+    if "agent_llm_history"not in st.session_state:
         st.session_state["agent_llm_history"] = []  # clean role/content for API
 
     # quick prompts

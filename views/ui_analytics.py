@@ -215,7 +215,7 @@ def render_analytics(filtered, churn_rate):
         fig_heatmap = go.Figure(data=go.Heatmap(
             z=svc_pivot.values, x=svc_pivot.columns.tolist(), y=svc_pivot.index.tolist(),
             colorscale=[[0, "#312e81"], [0.5, "#6366f1"], [1, "#f43f5e"]],
-            text=[[f"{v:.1%}" for v in row] for row in svc_pivot.values],
+            text=[[f"{v:.1%}"for v in row] for row in svc_pivot.values],
             texttemplate="%{text}", textfont=dict(size=13, color="white"),
             hovertemplate="Service: %{y}<br>Status: %{x}<br>Churn Rate: %{text}<extra></extra>",
             colorbar=dict(title=dict(text="Churn Rate", font=dict(color="#cbd5e1")),

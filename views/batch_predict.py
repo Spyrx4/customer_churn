@@ -66,7 +66,7 @@ def render():
     )
 
     # format info
-    with st.expander("📋 Format File & Kolom yang Diperlukan", expanded=False):
+    with st.expander("Format File & Kolom yang Diperlukan", expanded=False):
         st.markdown("**Format file yang didukung:**")
         fmt_cols = st.columns(6)
         for i, (ext, label) in enumerate(SUPPORTED_FORMATS.items()):
@@ -83,7 +83,7 @@ def render():
 
     # upload
     uploaded_file = st.file_uploader(
-        "📂 Upload file data pelanggan",
+        "Upload file data pelanggan",
         type=list(SUPPORTED_FORMATS.keys()),
         help="Pastikan file memiliki kolom yang sesuai dengan data training",
         key="batch_uploader",
@@ -93,23 +93,23 @@ def render():
         try:
             raw_df = _read_uploaded_file(uploaded_file)
         except Exception as e:
-            st.error(f"❌ Gagal membaca file: {e}")
+            st.error(f"Gagal membaca file: {e}")
             return
 
-        has_id = "id" in raw_df.columns
+        has_id = "id"in raw_df.columns
         id_series = raw_df["id"].copy() if has_id else pd.RangeIndex(start=1, stop=len(raw_df) + 1)
 
         # validate columns
         missing_cols = [c for c in REQUIRED_FEATURE_COLS if c not in raw_df.columns]
         if missing_cols:
-            st.error(f"❌ Kolom berikut tidak ditemukan: **{', '.join(missing_cols)}**")
+            st.error(f"Kolom berikut tidak ditemukan: **{', '.join(missing_cols)}**")
             st.markdown("Kolom yang ditemukan dalam file:")
             st.code(", ".join(raw_df.columns.tolist()), language="text")
             return
 
         # preview
         st.markdown("---")
-        st.markdown("### 📄 Preview Data")
+        st.markdown("### Preview Data")
         st.markdown(
             f'<p style="color:#94a3b8;">File: <b>{uploaded_file.name}</b> &bull; '
             f'{len(raw_df):,} baris &bull; {len(raw_df.columns)} kolom</p>',
@@ -119,13 +119,13 @@ def render():
         st.markdown("---")
 
         # predict
-        if st.button("🚀 Jalankan Prediksi", use_container_width=True, type="primary", key="batch_btn"):
+        if st.button("Jalankan Prediksi", use_container_width=True, type="primary", key="batch_btn"):
             with st.spinner("Memproses prediksi..."):
                 feature_df = raw_df[REQUIRED_FEATURE_COLS].copy()
                 try:
                     predictions, probabilities = predict_churn(feature_df)
                 except Exception as e:
-                    st.error(f"❌ Error saat prediksi: {e}")
+                    st.error(f"Error saat prediksi: {e}")
                     return
 
             result_df = pd.DataFrame()
@@ -147,13 +147,13 @@ def render():
             st.session_state["batch_result"] = result_df
 
         # results
-        if "batch_result" in st.session_state:
+        if "batch_result"in st.session_state:
             result_df = st.session_state["batch_result"]
             _render_results(result_df)
     else:
         st.markdown(
             '<div style="text-align:center; padding:80px 0;">'
-            '<p style="font-size:48px; margin-bottom:8px;">📂</p>'
+            '<p style="font-size:48px; margin-bottom:8px;"></p>'
             '<p style="color:#64748b; font-size:16px;">'
             "Upload file untuk memulai prediksi batch</p>"
             '<p style="color:#475569; font-size:13px;">'
@@ -166,7 +166,7 @@ def render():
 # results section
 def _render_results(result_df: pd.DataFrame):
     st.markdown("---")
-    st.markdown("## 📊 Hasil Prediksi")
+    st.markdown("## Hasil Prediksi")
 
     total = len(result_df)
     churn_yes = (result_df["Prediction"] == 1).sum()
@@ -185,7 +185,7 @@ def _render_results(result_df: pd.DataFrame):
 
     st.markdown("---")
 
-    tab_table, tab_viz = st.tabs(["📋 Tabel Hasil", "📊 Visualisasi"])
+    tab_table, tab_viz = st.tabs(["Tabel Hasil", "Visualisasi"])
 
     # table
     with tab_table:
@@ -201,7 +201,7 @@ def _render_results(result_df: pd.DataFrame):
                 default=["High", "Medium", "Low"], key="batch_risk_filter",
             )
         with fc3:
-            id_col = "id" if "id" in result_df.columns else "row_index"
+            id_col = "id"if "id"in result_df.columns else "row_index"
             sort_col = st.selectbox(
                 "Urutkan berdasarkan", options=["Churn_Probability", id_col],
                 key="batch_sort",
@@ -230,28 +230,28 @@ def _render_results(result_df: pd.DataFrame):
             )
             st.dataframe(styled, use_container_width=True, height=500)
         else:
-            st.info(f"📋 Data terlalu besar untuk styling ({len(display_df):,} baris). Menampilkan tabel biasa.")
+            st.info(f"Data terlalu besar untuk styling ({len(display_df):,} baris). Menampilkan tabel biasa.")
             st.dataframe(display_df, use_container_width=True, height=500)
 
         st.markdown("---")
         dl1, dl2, dl3 = st.columns(3)
         with dl1:
             st.download_button(
-                "📥 Download CSV",
+                "Download CSV",
                 data=result_df.to_csv(index=False).encode("utf-8"),
                 file_name="churn_predictions.csv", mime="text/csv",
                 use_container_width=True, key="dl_csv",
             )
         with dl2:
             st.download_button(
-                "📥 Download JSON",
+                "Download JSON",
                 data=result_df.to_json(orient="records", indent=2).encode("utf-8"),
                 file_name="churn_predictions.json", mime="application/json",
                 use_container_width=True, key="dl_json",
             )
         with dl3:
             st.download_button(
-                "📥 Download Parquet",
+                "Download Parquet",
                 data=result_df.to_parquet(index=False),
                 file_name="churn_predictions.parquet", mime="application/octet-stream",
                 use_container_width=True, key="dl_parquet",
@@ -261,7 +261,7 @@ def _render_results(result_df: pd.DataFrame):
     with tab_viz:
         v1, v2 = st.columns(2)
         with v1:
-            st.markdown('<p class="dashboard-subheader">📌 Distribusi Prediksi</p>', unsafe_allow_html=True)
+            st.markdown('<p class="dashboard-subheader"> Distribusi Prediksi</p>', unsafe_allow_html=True)
             pred_dist = result_df["Churn_Label"].value_counts().reset_index()
             pred_dist.columns = ["Churn", "Count"]
             fig_pie = px.pie(
@@ -282,7 +282,7 @@ def _render_results(result_df: pd.DataFrame):
             st.plotly_chart(fig_pie, use_container_width=True)
 
         with v2:
-            st.markdown('<p class="dashboard-subheader">⚠️ Distribusi Risk Level</p>', unsafe_allow_html=True)
+            st.markdown('<p class="dashboard-subheader">️ Distribusi Risk Level</p>', unsafe_allow_html=True)
             risk_dist = (
                 result_df["Risk_Level"].value_counts()
                 .reindex(["High", "Medium", "Low"]).fillna(0).reset_index()
@@ -300,7 +300,7 @@ def _render_results(result_df: pd.DataFrame):
 
         v3, v4 = st.columns(2)
         with v3:
-            st.markdown('<p class="dashboard-subheader">📈 Distribusi Probabilitas Churn</p>', unsafe_allow_html=True)
+            st.markdown('<p class="dashboard-subheader"> Distribusi Probabilitas Churn</p>', unsafe_allow_html=True)
             fig_hist = px.histogram(
                 result_df, x="Churn_Probability", nbins=40,
                 color="Churn_Label", barmode="overlay",
@@ -316,8 +316,8 @@ def _render_results(result_df: pd.DataFrame):
             st.plotly_chart(fig_hist, use_container_width=True)
 
         with v4:
-            st.markdown('<p class="dashboard-subheader">🔝 Top 10 Pelanggan Berisiko Tinggi</p>', unsafe_allow_html=True)
-            id_col = "id" if "id" in result_df.columns else "row_index"
+            st.markdown('<p class="dashboard-subheader"> Top 10 Pelanggan Berisiko Tinggi</p>', unsafe_allow_html=True)
+            id_col = "id"if "id"in result_df.columns else "row_index"
             top10 = result_df.nlargest(10, "Churn_Probability")
             fig_top = px.bar(
                 top10, y=top10[id_col].astype(str), x="Churn_Probability",
@@ -334,7 +334,7 @@ def _render_results(result_df: pd.DataFrame):
             )
             st.plotly_chart(fig_top, use_container_width=True)
 
-        st.markdown('<p class="dashboard-subheader">📋 Prediksi Churn by Contract Type</p>', unsafe_allow_html=True)
+        st.markdown('<p class="dashboard-subheader"> Prediksi Churn by Contract Type</p>', unsafe_allow_html=True)
         ct_dist = (
             result_df.groupby("Contract")["Churn_Label"]
             .value_counts(normalize=True).rename("Proportion").reset_index()

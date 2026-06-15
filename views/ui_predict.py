@@ -14,7 +14,7 @@ def render_prediction():
     st.markdown("### Customer Profile")
     cp1, cp2, cp3, cp4, cp5 = st.columns(5)
     with cp1: gender = st.selectbox("Gender", ["Male", "Female"], key="pred_gender")
-    with cp2: seniorCtzn = int(st.selectbox("Senior Citizen", options=[0, 1], format_func=lambda x: "Yes" if x == 1 else "No", key="pred_senior"))
+    with cp2: seniorCtzn = int(st.selectbox("Senior Citizen", options=[0, 1], format_func=lambda x: "Yes"if x == 1 else "No", key="pred_senior"))
     with cp3: partner = st.selectbox("Partner", yes_no, key="pred_partner")
     with cp4: dependents = st.selectbox("Dependents", yes_no, key="pred_dep")
     with cp5: tenure = st.slider("Tenure (bulan)", 0, 72, 12, key="pred_tenure")
@@ -45,7 +45,7 @@ def render_prediction():
 
     st.markdown("---")
 
-    if st.button("🚀 Predict Churn", use_container_width=True, type="primary"):
+    if st.button("Predict Churn", use_container_width=True, type="primary"):
         # Payload prediksi
         payload = {
             "gender": gender,
@@ -77,9 +77,9 @@ def render_prediction():
                 predictions, probabilities = predict_churn(raw_df)
                 pred = int(predictions[0])
                 proba = float(probabilities[0])
-                risk = "High" if proba >= 0.8 else "Medium" if proba >= 0.5 else "Low"
+                risk = "High"if proba >= 0.8 else "Medium"if proba >= 0.5 else "Low"
                 
-            st.success("✅ Prediksi Berhasil")
+            st.success("Prediksi Berhasil")
             
             # TAMPILIN HASIL
             r1, r2, r3 = st.columns(3)
@@ -87,8 +87,8 @@ def render_prediction():
             risk_color = {"High": "#f43f5e", "Medium": "#fb923c", "Low": "#34d399"}
             
             with r1:
-                color = "#f43f5e" if pred == 1 else "#34d399"
-                st.markdown(f'<div class="pred-card {risk_css.get(risk, "")}"><h2 style="color:{color}">{"CHURN" if pred == 1 else "STAY"}</h2><p>Prediksi</p></div>', unsafe_allow_html=True)
+                color = "#f43f5e"if pred == 1 else "#34d399"
+                st.markdown(f'<div class="pred-card {risk_css.get(risk, "")}"><h2 style="color:{color}">{"CHURN"if pred == 1 else "STAY"}</h2><p>Prediksi</p></div>', unsafe_allow_html=True)
             with r2:
                 st.markdown(f'<div class="pred-card {risk_css.get(risk, "")}"><h2 style="color:#e0e7ff">{proba:.1%}</h2><p>Probabilitas</p></div>', unsafe_allow_html=True)
             with r3:
@@ -115,7 +115,7 @@ def render_prediction():
 
             # AI Recommendation for individual customer
             st.markdown("---")
-            st.markdown("### 🤖 Rekomendasi Tindakan (AI Prescriptive Analytics)")
+            st.markdown("### Rekomendasi Tindakan (AI Prescriptive Analytics)")
             with st.spinner("Menghasilkan rekomendasi retensi personal..."):
                 from llm.agent import run_agent
                 profile_str = (
@@ -135,5 +135,5 @@ def render_prediction():
                     st.error(f"Terjadi kesalahan saat memuat rekomendasi AI: {e}")
 
         except Exception as e:
-            st.error(f"❌ Terjadi kesalahan saat memprediksi churn")
+            st.error(f"Terjadi kesalahan saat memprediksi churn")
             st.exception(e)
