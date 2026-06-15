@@ -69,7 +69,11 @@ def render_prediction():
             "MonthlyCharges": monthCharges,
             "TotalCharges": totalCharges
         }
+        st.session_state["current_prediction_payload"] = payload
+        st.session_state["sim_data"] = payload
 
+    if "current_prediction_payload" in st.session_state:
+        payload = st.session_state["current_prediction_payload"]
         try:
             with st.spinner("Menganalisis data pelanggan..."):
                 from utils.ml_utils import predict_churn
@@ -78,7 +82,7 @@ def render_prediction():
                 predictions, probabilities = predict_churn(raw_df)
                 pred = int(predictions[0])
                 proba = float(probabilities[0])
-                risk = "High"if proba >= 0.8 else "Medium"if proba >= 0.5 else "Low"
+                risk = "High" if proba >= 0.8 else "Medium" if proba >= 0.5 else "Low"
                 
             st.success("Prediksi Berhasil")
             
@@ -88,8 +92,8 @@ def render_prediction():
             risk_color = {"High": "#f43f5e", "Medium": "#fb923c", "Low": "#34d399"}
             
             with r1:
-                color = "#f43f5e"if pred == 1 else "#34d399"
-                st.markdown(f'<div class="pred-card {risk_css.get(risk, "")}"><h2 style="color:{color}">{"CHURN"if pred == 1 else "STAY"}</h2><p>Prediksi</p></div>', unsafe_allow_html=True)
+                color = "#f43f5e" if pred == 1 else "#34d399"
+                st.markdown(f'<div class="pred-card {risk_css.get(risk, "")}"><h2 style="color:{color}">{"CHURN" if pred == 1 else "STAY"}</h2><p>Prediksi</p></div>', unsafe_allow_html=True)
             with r2:
                 st.markdown(f'<div class="pred-card {risk_css.get(risk, "")}"><h2 style="color:#e0e7ff">{proba:.1%}</h2><p>Probabilitas</p></div>', unsafe_allow_html=True)
             with r3:
@@ -149,8 +153,8 @@ def render_prediction():
             with st.spinner("Menghasilkan rekomendasi retensi personal..."):
                 from llm.agent import run_agent
                 profile_str = (
-                    f"Contract: {contract}, Tenure: {tenure} bulan, Monthly Charges: ${monthCharges}, "
-                    f"Internet Service: {internetservice}, Tech Support: {techSupp}, Payment: {payMeth}"
+                    f"Contract: {payload['Contract']}, Tenure: {payload['tenure']} bulan, Monthly Charges: ${payload['MonthlyCharges']}, "
+                    f"Internet Service: {payload['InternetService']}, Tech Support: {payload['TechSupport']}, Payment: {payload['PaymentMethod']}"
                 )
                 prompt = (
                     f"Customer dengan profil berikut diprediksi memiliki probabilitas churn {proba:.1%} (Risiko {risk}).\n"
@@ -164,11 +168,12 @@ def render_prediction():
                 except Exception as e:
                     st.error(f"Terjadi kesalahan saat memuat rekomendasi AI: {e}")
 
-            # Bridge to Simulator
+            # Simulator
             st.markdown("---")
-            if st.button("Analyze in Simulator", width='stretch'):
-                st.session_state["sim_data"] = payload
-                st.success("Data tersimpan! Silakan klik tab 'Analytics & Simulator' di atas untuk memulai simulasi.")
+            st.markdown("### Simulasi Strategi Retensi")
+            st.markdown("Gunakan simulator di bawah ini untuk melihat bagaimana strategi yang Anda pilih akan mengubah probabilitas churn pelanggan ini.")
+            from views.simulator import inject_simulator
+            inject_simulator()
 
         except Exception as e:
             st.error(f"Terjadi kesalahan saat memprediksi churn")

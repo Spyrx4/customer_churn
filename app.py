@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import joblib
 from views import batch_predict
-from views.simulator import inject_simulator
 from views.ui_analytics import render_analytics
 from views.ui_predict import render_prediction
 from views.ui_agent import render_agent
@@ -67,11 +66,9 @@ st.sidebar.markdown(f"Total: {len(filtered):,} / {len(df):,} customers")
 st.markdown("# Customer Churn Analytics")
 st.markdown('<p style="color:#94a3b8; margin-top:-10px;">Analitik & Prediksi Churn Pelanggan</p>', unsafe_allow_html=True)
 
-tabs = st.tabs(["Analytics & Simulator", "Individual Prediction", "Batch Prediction", "AI Consultant (Rini)"])
+tabs = st.tabs(["Global Analytics", "Individual Prediction & Simulation", "Batch Prediction", "AI Consultant (Rini)"])
 
 with tabs[0]:
-    inject_simulator()
-    
     churn_count = (filtered["Churn"] == "Yes").sum()
     churn_rate = churn_count / len(filtered) * 100 if len(filtered) > 0 else 0
     render_analytics(filtered, churn_rate)
