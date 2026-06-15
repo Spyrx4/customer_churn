@@ -79,23 +79,27 @@ def explain_prediction(raw_df: pd.DataFrame):
     
     X = preprocess["ohe_preprocess"].transform(df)
 
-    explainer = shap.TreeExplainer(model)
-    shap_values = explainer.shap_values(X)
-    
-    # Ekstrak feature names dari transformer
-    feature_names = preprocess["ohe_preprocess"].get_feature_names_out()
-    
-    # Ambil baris pertama (karena ini local explanation / 1 baris)
-    # SHAP explainer XGBoost biasanya mereturn matriks (samples, features) 
-    # Jika output list (multi-class), ambil index 1 untuk class 'Churn'
-    if isinstance(shap_values, list):
-        vals = shap_values[1][0]
-    else:
-        vals = shap_values[0]
+    try:
+        explainer = shap.TreeExplainer(model)
+        shap_values = explainer.shap_values(X)
         
-    res_df = pd.DataFrame({
-        "Feature": feature_names,
-        "SHAP Value": vals
-    })
-    
-    return res_df
+        # Ekstrak feature names dari transformer
+        feature_names = preprocess["ohe_preprocess"].get_feature_names_out()
+        
+        # Ambil baris pertama (karena ini local explanation / 1 baris)
+        # SHAP explainer XGBoost biasanya mereturn matriks (samples, features) 
+        # Jika output list (multi-class), ambil index 1 untuk class 'Churn'
+        if isinstance(shap_values, list):
+            vals = shap_values[1][0]
+        else:
+            vals = shap_values[0]
+            
+        res_df = pd.DataFrame({
+            "Feature": feature_names,
+            "SHAP Value": vals
+        })
+        
+        return res_df
+    except Exception:
+        # Return None gracefully if SHAP fails due to XGBoost version incompatibility
+        return None
