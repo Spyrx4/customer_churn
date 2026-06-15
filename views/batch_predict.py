@@ -185,11 +185,11 @@ def _render_results(result_df: pd.DataFrame):
 
     st.markdown("---")
 
-    tab_table, tab_viz = st.tabs(["Tabel Hasil", "Visualisasi"])
+    tab_table, tab_viz, tab_sim = st.tabs(["Tabel Hasil", "Visualisasi", "Batch Simulator"])
 
     # table
     with tab_table:
-        fc1, fc2, fc3 = st.columns(3)
+        fc1, fc2, fc3, fc4 = st.columns(4)
         with fc1:
             label_filter = st.multiselect(
                 "Filter Prediksi", options=["Yes", "No"], default=["Yes", "No"],
@@ -201,7 +201,9 @@ def _render_results(result_df: pd.DataFrame):
                 default=["High", "Medium", "Low"], key="batch_risk_filter",
             )
         with fc3:
-            id_col = "id"if "id"in result_df.columns else "row_index"
+            prob_filter = st.slider("Filter Probabilitas Churn", 0.0, 1.0, (0.0, 1.0), key="batch_prob_filter")
+        with fc4:
+            id_col = "id" if "id" in result_df.columns else "row_index"
             sort_col = st.selectbox(
                 "Urutkan berdasarkan", options=["Churn_Probability", id_col],
                 key="batch_sort",
@@ -211,6 +213,8 @@ def _render_results(result_df: pd.DataFrame):
         display_df = result_df[
             result_df["Churn_Label"].isin(label_filter)
             & result_df["Risk_Level"].isin(risk_filter)
+            & (result_df["Churn_Probability"] >= prob_filter[0])
+            & (result_df["Churn_Probability"] <= prob_filter[1])
         ].sort_values(sort_col, ascending=sort_asc)
 
         st.markdown(
@@ -348,3 +352,105 @@ def _render_results(result_df: pd.DataFrame):
         fig_ct.update_layout(**PLOTLY_LAYOUT, height=380, yaxis_tickformat=".0%",
                               xaxis_title="", yaxis_title="Proporsi")
         st.plotly_chart(fig_ct, width='stretch')
+
+    # batch simulator
+    with tab_sim:
+        st.markdown("### Batch Churn Prevention Simulator")
+        st.markdown(
+            "Terapkan strategi retensi secara simulasi pada pelanggan yang saat ini "
+            "ditampilkan di **Tabel Hasil** (berdasarkan filter)."
+        )
+        st.info(f"Target simulasi: **{len(display_df):,} pelanggan**")
+        
+        if len(display_df) == 0:
+            st.warning("Tidak ada pelanggan yang dipilih untuk simulasi. Sesuaikan filter di Tabel Hasil.")
+        else:
+            col_presets, col_input = st.columns([1, 1])
+
+            with col_presets:
+                st.write("**Strategy Presets**")
+                use_promo = st.checkbox("Promo Paket Hemat (Diskon 20% Monthly Charges)", key="bsim_promo")
+                use_loyalty = st.checkbox("Loyalty Lock (Ubah kontrak ke Two Year)", key="bsim_loyalty")
+                use_techsec = st.checkbox("Tech-Security Bundle (Aktifkan Tech Support & Online Security)", key="bsim_techsec")
+
+            with col_input:
+                st.write("**Manual Overrides**")
+                apply_monthly = st.checkbox("Ubah Monthly Charges menjadi nilai tetap", key="bsim_m_check")
+                new_monthly = st.number_input("Nilai Monthly Charges ($)", min_value=0.0, value=70.0, disabled=not apply_monthly)
+                
+                apply_contract = st.checkbox("Ubah Kontrak", key="bsim_c_check")
+                new_contract = st.selectbox("Tipe Kontrak", ["Month-to-month", "One year", "Two year"], disabled=not apply_contract)
+
+            if st.button("Jalankan Batch Simulasi", type="primary", width="stretch"):
+                with st.spinner("Menjalankan simulasi prediksi untuk batch ini..."):
+                    sim_df = display_df.copy()
+                    
+                    # Apply presets
+                    if use_promo:
+                        sim_df["MonthlyCharges"] = sim_df["MonthlyCharges"] * 0.8
+                    if use_loyalty:
+                        sim_df["Contract"] = "Two year"
+                    if use_techsec:
+                        has_internet = sim_df["InternetService"] != "No"
+                        sim_df.loc[has_internet, "TechSupport"] = "Yes"
+                        sim_df.loc[has_internet, "OnlineSecurity"] = "Yes"
+                        
+                    # Apply manual overrides (overrides presets if both are used)
+                    if apply_monthly:
+                        sim_df["MonthlyCharges"] = new_monthly
+                    if apply_contract:
+                        sim_df["Contract"] = new_contract
+                        
+                    # Recalculate Total Charges
+                    sim_df["TotalCharges"] = np.where(sim_df["tenure"] > 0, sim_df["MonthlyCharges"] * sim_df["tenure"], sim_df["MonthlyCharges"])
+                    
+                    feature_df = sim_df[REQUIRED_FEATURE_COLS]
+                    predictions, probabilities = predict_churn(feature_df)
+                    
+                    sim_df["Sim_Prediction"] = predictions
+                    sim_df["Sim_Probability"] = np.round(probabilities, 4)
+                    
+                    # Compute Compare metrics
+                    before_churn_yes = (display_df["Prediction"] == 1).sum()
+                    after_churn_yes = (sim_df["Sim_Prediction"] == 1).sum()
+                    diff_churn_yes = after_churn_yes - before_churn_yes
+                    
+                    before_avg_prob = display_df["Churn_Probability"].mean()
+                    after_avg_prob = sim_df["Sim_Probability"].mean()
+                    diff_avg_prob = after_avg_prob - before_avg_prob
+                    
+                    before_high_risk = (display_df["Risk_Level"] == "High").sum()
+                    sim_risk_level = pd.cut(
+                        sim_df["Sim_Probability"], bins=[0, 0.5, 0.8, 1.01],
+                        labels=["Low", "Medium", "High"], right=False
+                    )
+                    after_high_risk = (sim_risk_level == "High").sum()
+                    diff_high_risk = after_high_risk - before_high_risk
+                    
+                    st.markdown("---")
+                    st.markdown("### Hasil Simulasi")
+                    sc1, sc2, sc3 = st.columns(3)
+                    
+                    def fmt_delta(val, is_pct=False):
+                        sign = "+" if val > 0 else ""
+                        return f"{sign}{val:.1%}" if is_pct else f"{sign}{val:,}"
+                        
+                    sc1.metric("Predicted Churn (After)", f"{after_churn_yes:,}", delta=fmt_delta(diff_churn_yes), delta_color="inverse")
+                    sc2.metric("Avg Probability (After)", f"{after_avg_prob:.1%}", delta=fmt_delta(diff_avg_prob, True), delta_color="inverse")
+                    sc3.metric("High Risk Customers (After)", f"{after_high_risk:,}", delta=fmt_delta(diff_high_risk), delta_color="inverse")
+                    
+                    # Show preview of simulated table
+                    st.markdown("**Preview Perubahan (100 Data Pertama):**")
+                    display_cols = [id_col, "Churn_Probability", "Sim_Probability", "Contract", "MonthlyCharges", "TechSupport"]
+                    preview_df = sim_df[display_cols].head(100)
+                    
+                    # Highlight improvement (prob drops)
+                    def highlight_prob_drop(row):
+                        if row["Sim_Probability"] < row["Churn_Probability"]:
+                            return ["background-color: rgba(52,211,153,0.1)"] * len(row)
+                        return [""] * len(row)
+
+                    styled_preview = preview_df.style.apply(highlight_prob_drop, axis=1).format(
+                        {"Churn_Probability": "{:.1%}", "Sim_Probability": "{:.1%}", "MonthlyCharges": "${:.2f}"}
+                    )
+                    st.dataframe(styled_preview, width='stretch')
