@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import joblib
 
-def inject_simulator(model, preprocess):
+def inject_simulator():
     st.markdown("---")
     st.markdown("### Churn Prevention Simulator")
     st.markdown("Ubah variabel di bawah untuk simulasi strategi bisnis.")
@@ -40,23 +40,12 @@ def inject_simulator(model, preprocess):
     }])
 
     try:
+        from utils.ml_utils import predict_churn
         df = raw_data.copy()
         
-        # Tenure binning logic
-        TENURE_BINS = [0, 6, 12, 24, 60, np.inf]
-        TENURE_LABELS = list(range(len(TENURE_BINS) - 1))
-        df["Tenure_bucket"] = pd.cut(df["tenure"], bins=TENURE_BINS, labels=TENURE_LABELS, right=False)
-        
-        # Feature transformation
-        for col in preprocess["log_cols"]:
-            if col in df:
-                df[col] = np.log1p(df[col])
-        
-        df[preprocess["cont_cols"]] = preprocess["scaler"].transform(df[preprocess["cont_cols"]])
-        X = preprocess["ohe_preprocess"].transform(df)
-        
         # Inference
-        proba = model.predict_proba(X)[0][1]
+        predictions, probabilities = predict_churn(df)
+        proba = probabilities[0]
         
         with col_result:
             st.write("Hasil Simulasi")

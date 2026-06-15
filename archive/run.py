@@ -12,7 +12,7 @@ def run_services():
 
     # Backend
     backend_process = subprocess.Popen(
-        [sys.executable, "-m", "uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"],
+        [sys.executable, "-m", "uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000"],
         cwd=project_root,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
@@ -25,7 +25,7 @@ def run_services():
     # Frontend  
     print("Frontend memuat...")
     try:
-        subprocess.run([sys.executable, "-m", "streamlit", "run", "main.py"], cwd=project_root)
+        subprocess.run([sys.executable, "-m", "streamlit", "run", "app.py"], cwd=project_root)
     except KeyboardInterrupt:
         print("\nBerhenti...")
     finally:

@@ -26,35 +26,7 @@ SUPPORTED_FORMATS = {
 }
 
 # model & pipeline
-TENURE_BINS = [0, 6, 12, 24, 60, np.inf]
-TENURE_LABELS = list(range(len(TENURE_BINS) - 1))
-
-
-@st.cache_resource
-def _load_artifacts():
-    preprocess = joblib.load("artifacts/preprocessing_fe/preprocessing_artifacts.joblib")
-    model = joblib.load("artifacts/models/xgb_ros.pkl")
-    return preprocess, model
-
-
-def _batch_inference(raw_df: pd.DataFrame):
-    preprocess, model = _load_artifacts()
-    df = raw_df.copy()
-
-    df["Tenure_bucket"] = pd.cut(
-        df["tenure"], bins=TENURE_BINS, labels=TENURE_LABELS, right=False
-    )
-    for col in preprocess["log_cols"]:
-        if col in df:
-            df[col] = np.log1p(df[col])
-
-    df[preprocess["cont_cols"]] = preprocess["scaler"].transform(df[preprocess["cont_cols"]])
-    X = preprocess["ohe_preprocess"].transform(df)
-
-    proba = model.predict_proba(X)[:, 1]
-    pred = (proba >= 0.5).astype(int)
-    return pred, proba
-
+from utils.ml_utils import predict_churn
 
 def _read_uploaded_file(uploaded_file) -> pd.DataFrame:
     name = uploaded_file.name.lower()
@@ -151,7 +123,7 @@ def render():
             with st.spinner("Memproses prediksi..."):
                 feature_df = raw_df[REQUIRED_FEATURE_COLS].copy()
                 try:
-                    predictions, probabilities = _batch_inference(feature_df)
+                    predictions, probabilities = predict_churn(feature_df)
                 except Exception as e:
                     st.error(f"❌ Error saat prediksi: {e}")
                     return

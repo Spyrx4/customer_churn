@@ -1,15 +1,13 @@
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
-import requests
 
 def render_prediction():
     st.markdown("---")
     st.markdown(
-        '<p style="color:#94a3b8;">Isi data pelanggan di bawah ini. Prediksi akan diproses melalui <b>FastAPI Backend (Port 8000)</b>.</p>',
+        '<p style="color:#94a3b8;">Isi data pelanggan di bawah ini untuk melihat prediksi churn.</p>',
         unsafe_allow_html=True,
     )
-
     yes_no = ["Yes", "No"]
 
     # UI Components (Data Input)
@@ -47,8 +45,8 @@ def render_prediction():
 
     st.markdown("---")
 
-    if st.button("🚀 Predict via API", use_container_width=True, type="primary"):
-        # Payload buat dikirim ke FastAPI
+    if st.button("🚀 Predict Churn", use_container_width=True, type="primary"):
+        # Payload prediksi
         payload = {
             "gender": gender,
             "SeniorCitizen": seniorCtzn,
@@ -72,54 +70,70 @@ def render_prediction():
         }
 
         try:
-            # NEMBAK KE FASTAPI BACKEND
-            with st.spinner("Menghubungi Backend API..."):
-                response = requests.post("http://localhost:8000/predict", json=payload, timeout=10)
+            with st.spinner("Menganalisis data pelanggan..."):
+                from utils.ml_utils import predict_churn
+                raw_df = pd.DataFrame([payload])
+                
+                predictions, probabilities = predict_churn(raw_df)
+                pred = int(predictions[0])
+                proba = float(probabilities[0])
+                risk = "High" if proba >= 0.8 else "Medium" if proba >= 0.5 else "Low"
+                
+            st.success("✅ Prediksi Berhasil")
             
-            if response.status_code == 200:
-                res = response.json()
-                pred = res["prediction"]
-                proba = res["churn_probability"]
-                risk = res["risk_level"]
+            # TAMPILIN HASIL
+            r1, r2, r3 = st.columns(3)
+            risk_css = {"High": "risk-high", "Medium": "risk-medium", "Low": "risk-low"}
+            risk_color = {"High": "#f43f5e", "Medium": "#fb923c", "Low": "#34d399"}
+            
+            with r1:
+                color = "#f43f5e" if pred == 1 else "#34d399"
+                st.markdown(f'<div class="pred-card {risk_css.get(risk, "")}"><h2 style="color:{color}">{"CHURN" if pred == 1 else "STAY"}</h2><p>Prediksi</p></div>', unsafe_allow_html=True)
+            with r2:
+                st.markdown(f'<div class="pred-card {risk_css.get(risk, "")}"><h2 style="color:#e0e7ff">{proba:.1%}</h2><p>Probabilitas</p></div>', unsafe_allow_html=True)
+            with r3:
+                st.markdown(f'<div class="pred-card {risk_css.get(risk, "")}"><h2 style="color:{risk_color.get(risk, "#e0e7ff")}">{risk}</h2><p>Risk Level</p></div>', unsafe_allow_html=True)
 
-                st.success("✅ Prediksi Berhasil Diterima dari API")
-                
-                # TAMPILIN HASIL (Sama kayak sebelumnya tapi datanya dari API)
-                r1, r2, r3 = st.columns(3)
-                risk_css = {"High": "risk-high", "Medium": "risk-medium", "Low": "risk-low"}
-                risk_color = {"High": "#f43f5e", "Medium": "#fb923c", "Low": "#34d399"}
-                
-                with r1:
-                    color = "#f43f5e" if pred == 1 else "#34d399"
-                    st.markdown(f'<div class="pred-card {risk_css.get(risk, "")}"><h2 style="color:{color}">{"CHURN" if pred == 1 else "STAY"}</h2><p>Prediksi API</p></div>', unsafe_allow_html=True)
-                with r2:
-                    st.markdown(f'<div class="pred-card {risk_css.get(risk, "")}"><h2 style="color:#e0e7ff">{proba:.1%}</h2><p>Probabilitas</p></div>', unsafe_allow_html=True)
-                with r3:
-                    st.markdown(f'<div class="pred-card {risk_css.get(risk, "")}"><h2 style="color:{risk_color.get(risk, "#e0e7ff")}">{risk}</h2><p>Risk Level</p></div>', unsafe_allow_html=True)
+            # Gauge Chart
+            fig_gauge = go.Figure(go.Indicator(
+                mode="gauge+number", value=proba * 100,
+                number=dict(suffix="%", font=dict(color="#e0e7ff", size=48)),
+                title=dict(text="Churn Probability", font=dict(color="#a5b4fc", size=16)),
+                gauge=dict(
+                    axis=dict(range=[0, 100], tickfont=dict(color="#64748b")),
+                    bar=dict(color="#6366f1"),
+                    bgcolor="rgba(255,255,255,0.05)",
+                    steps=[
+                        dict(range=[0, 50], color="rgba(99, 102, 241, 0.15)"),
+                        dict(range=[50, 80], color="rgba(251, 146, 60, 0.2)"),
+                        dict(range=[80, 100], color="rgba(244, 63, 94, 0.25)"),
+                    ],
+                )
+            ))
+            fig_gauge.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font=dict(color="#cbd5e1"), height=320)
+            st.plotly_chart(fig_gauge, use_container_width=True)
 
-                # Gauge Chart
-                fig_gauge = go.Figure(go.Indicator(
-                    mode="gauge+number", value=proba * 100,
-                    number=dict(suffix="%", font=dict(color="#e0e7ff", size=48)),
-                    title=dict(text="Churn Probability (API Results)", font=dict(color="#a5b4fc", size=16)),
-                    gauge=dict(
-                        axis=dict(range=[0, 100], tickfont=dict(color="#64748b")),
-                        bar=dict(color="#6366f1"),
-                        bgcolor="rgba(255,255,255,0.05)",
-                        steps=[
-                            dict(range=[0, 50], color="rgba(99, 102, 241, 0.15)"),
-                            dict(range=[50, 80], color="rgba(251, 146, 60, 0.2)"),
-                            dict(range=[80, 100], color="rgba(244, 63, 94, 0.25)"),
-                        ],
-                    )
-                ))
-                fig_gauge.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font=dict(color="#cbd5e1"), height=320)
-                st.plotly_chart(fig_gauge, use_container_width=True)
-
-            else:
-                st.error(f"❌ API Error: {response.status_code}")
-                st.json(response.json())
+            # AI Recommendation for individual customer
+            st.markdown("---")
+            st.markdown("### 🤖 Rekomendasi Tindakan (AI Prescriptive Analytics)")
+            with st.spinner("Menghasilkan rekomendasi retensi personal..."):
+                from llm.agent import run_agent
+                profile_str = (
+                    f"Contract: {contract}, Tenure: {tenure} bulan, Monthly Charges: ${monthCharges}, "
+                    f"Internet Service: {internetservice}, Tech Support: {techSupp}, Payment: {payMeth}"
+                )
+                prompt = (
+                    f"Customer dengan profil berikut diprediksi memiliki probabilitas churn {proba:.1%} (Risiko {risk}).\n"
+                    f"Profil: {profile_str}\n"
+                    f"Berikan rekomendasi tindakan spesifik dan personal untuk agen customer service agar dapat mencegah churn pada customer ini. "
+                    f"Format respons profesional tanpa emoji."
+                )
+                try:
+                    ai_recommendation, _ = run_agent(prompt, [])
+                    st.info(ai_recommendation)
+                except Exception as e:
+                    st.error(f"Terjadi kesalahan saat memuat rekomendasi AI: {e}")
 
         except Exception as e:
-            st.error(f"❌ Gagal terhubung ke Backend (Pastikan FastAPI sudah jalan di port 8000)")
+            st.error(f"❌ Terjadi kesalahan saat memprediksi churn")
             st.exception(e)

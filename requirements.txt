@@ -12,12 +12,9 @@ imbalanced-learn>=0.12.4
 # dashboard
 streamlit>=1.40.2
 plotly>=5.24.1
-requests>=2.31.0
-
 # backend api
-fastapi>=0.110.0
-uvicorn>=0.29.0
-python-multipart>=0.0.9
+# Removed because the app is now fully Streamlit
+
 
 # file format
 openpyxl>=3.1.0

@@ -1,140 +1,86 @@
-# backend
-
-from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
-from fastapi.exceptions import RequestValidationError
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
-import joblib
-import numpy as np
+import streamlit as st
 import pandas as pd
+import joblib
+from views import batch_predict
+from views.simulator import inject_simulator
+from views.ui_analytics import render_analytics
+from views.ui_predict import render_prediction
+from views.ui_agent import render_agent
 
-# load artifacts
-preprocess = joblib.load("artifacts/preprocessing_fe/preprocessing_artifacts.joblib")
-model = joblib.load("artifacts/models/xgb_ros.pkl")
-
-# tenure binning
-TENURE_BINS = [0, 6, 12, 24, 60, np.inf]
-TENURE_LABELS = list(range(len(TENURE_BINS) - 1))
-
-def apply_binning(df: pd.DataFrame) -> pd.DataFrame:
-    df = df.copy()
-    df["Tenure_bucket"] = pd.cut(
-        df["tenure"],
-        bins=TENURE_BINS,
-        labels=TENURE_LABELS,
-        right=False
-    )
-    return df
-
-
-def inference_pipeline(raw_df: pd.DataFrame):
-    df = apply_binning(raw_df)  
-    
-    # log transform
-    for col in preprocess["log_cols"]:
-        if col in df:
-            df[col] = np.log1p(df[col])
-    
-    # scaling    
-    df[preprocess["cont_cols"]] = preprocess["scaler"].transform(df[preprocess["cont_cols"]])
-    
-    # one hot encoding
-    X = preprocess["ohe_preprocess"].transform(df)
-    
-    # predict
-    proba = model.predict_proba(X)[:, 1]
-    pred = (proba >= 0.5).astype(int)
-    
-    return int(pred[0]), float(proba[0])
-
-# fastapi
-app = FastAPI(title="Customer churn model API") 
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
+# Page configuration
+st.set_page_config(
+    page_title="Customer Churn Dashboard",
+    layout="wide",
+    initial_sidebar_state="expanded",
 )
 
-@app.exception_handler(RequestValidationError)
-async def validation_exception_handler(request: Request, exc: RequestValidationError):
-    return JSONResponse(
-        status_code=422,
-        content={
-            "error": "Invalid input format",
-            "details": exc.errors(),
-            "received_body": exc.body,
-        }
-    )
-    
-# input schema
-class CustInput(BaseModel):
-    gender: str = Field(alias="gender")
-    SeniorCitizen: int
-    Partner: str = Field(alias="Partner")
-    Dependents: str = Field(alias="Dependents")
-    tenure: int
-    PhoneService: str = Field(alias="PhoneService")
-    MultipleLines: str = Field(alias="MultipleLines")
-    InternetService: str = Field(alias="InternetService")
-    OnlineSecurity: str = Field(alias="OnlineSecurity")
-    OnlineBackup: str = Field(alias="OnlineBackup")
-    DeviceProtection: str = Field(alias="DeviceProtection")
-    TechSupport: str = Field(alias="TechSupport")
-    StreamingTV: str = Field(alias="StreamingTV")
-    StreamingMovies: str = Field(alias="StreamingMovies")
-    Contract: str = Field(alias="Contract")
-    PaperlessBilling: str = Field(alias="PaperlessBilling")
-    PaymentMethod: str = Field(alias="PaymentMethod")
-    MonthlyCharges: float
-    TotalCharges: float
-    
-    class Config:
-        populate_by_name = True
-        
-# prediction endpoint
-@app.post("/predict")
-def predict(data: CustInput):
-    
-    raw = pd.DataFrame([{
-        'gender': data.gender,
-        'SeniorCitizen': data.SeniorCitizen,
-        'Partner': data.Partner,
-        'Dependents': data.Dependents,
-        'tenure': data.tenure,
-        'PhoneService': data.PhoneService,
-        'MultipleLines': data.MultipleLines,
-        'InternetService': data.InternetService,
-        'OnlineSecurity': data.OnlineSecurity,
-        'OnlineBackup': data.OnlineBackup,
-        'DeviceProtection': data.DeviceProtection,
-        'TechSupport': data.TechSupport,
-        'StreamingTV': data.StreamingTV,
-        'StreamingMovies': data.StreamingMovies,
-        'Contract': data.Contract,
-        'PaperlessBilling': data.PaperlessBilling,
-        'PaymentMethod': data.PaymentMethod,
-        'MonthlyCharges': data.MonthlyCharges,
-        'TotalCharges': data.TotalCharges
-    }])
-    
-    pred, proba = inference_pipeline(raw)
-    
-    risk = (
-        "High" if proba >= 0.8 else
-        "Medium" if proba >= 0.5 else
-        "Low"
-    )
-    
-    return {
-        "prediction": pred,
-        "churn_probability": proba,
-        "risk_level": risk
+# Custom styling
+st.markdown("""
+<style>
+    .stApp { background: linear-gradient(135deg, #0f0c29 0%, #1a1a3e 50%, #24243e 100%); }
+    div[data-testid="stMetric"] {
+        background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 16px; padding: 20px 24px; backdrop-filter: blur(12px);
     }
+    section[data-testid="stSidebar"] { background: linear-gradient(180deg, #1e1b4b 0%, #1a1a3e 100%); }
+    .dashboard-subheader { color: #a5b4fc; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; }
+    .pred-card {
+        background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 16px; padding: 28px 32px; text-align: center; backdrop-filter: blur(12px);
+    }
+    .risk-high { border-left: 4px solid #f43f5e; }
+    .risk-medium { border-left: 4px solid #fb923c; }
+    .risk-low { border-left: 4px solid #34d399; }
+    .agent-greeting {
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.1));
+        border: 1px solid rgba(99, 102, 241, 0.25); border-radius: 16px; padding: 24px 28px;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# Data & Model loading
+@st.cache_data
+def load_data():
+    df = pd.read_csv("data/train.csv")
+    return df.drop(columns=["id"], errors="ignore")
+
+df = load_data()
+
+# Sidebar filters
+st.sidebar.markdown("## Filters")
+gender_filter = st.sidebar.multiselect("Gender", options=df["gender"].unique(), default=df["gender"].unique())
+contract_filter = st.sidebar.multiselect("Contract", options=df["Contract"].unique(), default=df["Contract"].unique())
+internet_filter = st.sidebar.multiselect("Internet Service", options=df["InternetService"].unique(), default=df["InternetService"].unique())
+senior_filter = st.sidebar.multiselect("Senior Citizen", options=[0, 1], default=[0, 1], format_func=lambda x: "Yes" if x == 1 else "No")
+
+mask = (df["gender"].isin(gender_filter) & df["Contract"].isin(contract_filter) & 
+        df["InternetService"].isin(internet_filter) & df["SeniorCitizen"].isin(senior_filter))
+filtered = df[mask].copy()
+st.sidebar.markdown(f"Total: {len(filtered):,} / {len(df):,} customers")
+
+# Main interface
+st.markdown("# Customer Churn Analytics")
+st.markdown('<p style="color:#94a3b8; margin-top:-10px;">Analitik & Prediksi Churn Pelanggan</p>', unsafe_allow_html=True)
+
+tabs = st.tabs(["Analytics & Simulator", "Individual Prediction", "Batch Prediction", "AI Consultant (Rini)"])
+
+with tabs[0]:
+    inject_simulator()
     
-# health check
-@app.get("/")
-def health():
-    return {"status": "API is running"}
+    churn_count = (filtered["Churn"] == "Yes").sum()
+    churn_rate = churn_count / len(filtered) * 100 if len(filtered) > 0 else 0
+    render_analytics(filtered, churn_rate)
+
+with tabs[1]:
+    render_prediction()
+
+with tabs[2]:
+    batch_predict.render()
+
+with tabs[3]:
+    render_agent()
+
+# Footer
+st.markdown("---")
+st.markdown('<p style="text-align:center; color:#64748b; font-size:13px;">Customer Churn Dashboard | 594K Records | XGBoost</p>', unsafe_allow_html=True)
