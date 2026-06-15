@@ -176,6 +176,10 @@ def render_prediction():
             st.markdown("---")
             st.markdown("### Simulasi Strategi Retensi")
             st.markdown("Gunakan simulator di bawah ini untuk melihat bagaimana strategi yang Anda pilih akan mengubah probabilitas churn pelanggan ini.")
+            
+            # Pastikan sim_data selalu tersinkronisasi dengan payload yang sedang dilihat
+            st.session_state["sim_data"] = payload
+            
             from views.simulator import inject_simulator
             inject_simulator()
 
