@@ -71,6 +71,10 @@ def render_prediction():
         }
         st.session_state["current_prediction_payload"] = payload
         st.session_state["sim_data"] = payload
+        
+        # Hapus state simulator lama agar default valuenya ter-reset mengikuti payload prediksi baru
+        for k in ["sim_monthly", "sim_contract", "sim_tech", "sim_sec", "sim_tenure", "sim_promo_hemat", "sim_loyalty_lock", "sim_tech_sec"]:
+            st.session_state.pop(k, None)
 
     if "current_prediction_payload" in st.session_state:
         payload = st.session_state["current_prediction_payload"]
