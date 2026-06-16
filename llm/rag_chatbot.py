@@ -1,6 +1,7 @@
 import os
 import time
 import json
+import streamlit as st
 from openai import OpenAI
 from dotenv import load_dotenv
 import chromadb
@@ -15,22 +16,45 @@ _PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 _CHROMA_DB_PATH = os.path.join(_PROJECT_ROOT, 'chroma_db')
 _DATA_DIR = os.path.join(_PROJECT_ROOT, 'data')
 
-client = OpenAI(
-    api_key=os.getenv('OPENAI_API_KEY')
-)
-
-openai_emb_func = embedding_functions.OpenAIEmbeddingFunction(
-    api_key=os.getenv('OPENAI_API_KEY'),
-    model_name='text-embedding-3-small'
-)
+def get_openai_client():
+    api_key = os.getenv('OPENAI_API_KEY')
+    if not api_key:
+        try:
+            api_key = st.secrets["OPENAI_API_KEY"]
+        except Exception:
+            pass
+    if not api_key:
+        return None
+    return OpenAI(api_key=api_key)
 
 chroma_client = chromadb.PersistentClient(_CHROMA_DB_PATH)
 
-collections = chroma_client.get_or_create_collection(
-    name='mixxcomm',
-    metadata={'description': 'MixxComm Profile & Customer Data'},
-    embedding_function=openai_emb_func
-)
+def get_collection():
+    api_key = os.getenv('OPENAI_API_KEY')
+    if not api_key:
+        try:
+            api_key = st.secrets["OPENAI_API_KEY"]
+        except Exception:
+            pass
+            
+    if api_key:
+        openai_emb_func = embedding_functions.OpenAIEmbeddingFunction(
+            api_key=api_key,
+            model_name='text-embedding-3-small'
+        )
+        return chroma_client.get_or_create_collection(
+            name='mixxcomm',
+            metadata={'description': 'MixxComm Profile & Customer Data'},
+            embedding_function=openai_emb_func
+        )
+    else:
+        # Fallback if no API key is available yet
+        return chroma_client.get_or_create_collection(
+            name='mixxcomm',
+            metadata={'description': 'MixxComm Profile & Customer Data'}
+        )
+
+collections = get_collection()
 
 def load_docs(folder_path):
     docs = []
@@ -119,8 +143,14 @@ def search(query, n_result=3, relevance_threshold=1.3):
             Lower = stricter filtering. Typical range: 0.8 (strict) to 1.5 (loose).
             Default 1.3 provides good balance between precision and recall.
     """
+    
+    try:
+        emb = get_embedding(query)
+    except ValueError:
+        return []
+
     result = collections.query(
-        query_texts=[query],
+        query_embeddings=[emb],
         n_results=n_result
     )
     
@@ -148,6 +178,9 @@ def check_relevance(query, threshold=1.3):
     return len(results) > 0
 
 def generate_answer(history):
+    client = get_openai_client()
+    if not client:
+        return "Error: OpenAI API Key tidak ditemukan."
     response = client.chat.completions.create(
         model='gpt-4o-mini',
         messages=history
@@ -156,6 +189,9 @@ def generate_answer(history):
     return response.choices[0].message.content
 
 def get_embedding(text):
+    client = get_openai_client()
+    if not client:
+        raise ValueError("OpenAI API Key is missing")
     response = client.embeddings.create(
         model='text-embedding-3-small',
         input=text

@@ -51,6 +51,14 @@ def load_data():
 df = load_data()
 
 # Sidebar filters
+st.sidebar.markdown("## Configuration")
+user_api_key = st.sidebar.text_input("OpenAI API Key", type="password", help="Paste your OpenAI API Key here for the AI Consultant demo.")
+if user_api_key:
+    import os
+    os.environ["OPENAI_API_KEY"] = user_api_key
+    st.session_state["OPENAI_API_KEY"] = user_api_key
+
+st.sidebar.markdown("---")
 st.sidebar.markdown("## Filters")
 gender_filter = st.sidebar.multiselect("Gender", options=df["gender"].unique(), default=df["gender"].unique())
 contract_filter = st.sidebar.multiselect("Contract", options=df["Contract"].unique(), default=df["Contract"].unique())

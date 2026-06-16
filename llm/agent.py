@@ -20,12 +20,14 @@ import streamlit as st
 load_dotenv()
 
 # ---------- OpenAI client ----------
-try:
-    api_key = st.secrets["OPENAI_API_KEY"]
-except Exception:
-    api_key = os.getenv("OPENAI_API_KEY")
-
-_client = OpenAI(api_key=api_key)
+def get_client():
+    try:
+        api_key = st.secrets["OPENAI_API_KEY"]
+    except Exception:
+        api_key = st.session_state.get("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
+    if not api_key:
+        return None
+    return OpenAI(api_key=api_key)
 
 # ---------- lazy-loaded resources ----------
 _df_cache = None
@@ -596,6 +598,11 @@ def run_agent(user_message: str, history: list) -> tuple[str, list]:
         - response_text: The final text response from the agent.
         - charts: List of plotly Figure objects generated during the turn.
     """
+    
+    _client = get_client()
+    if not _client:
+        return "Tolong masukkan OpenAI API Key di sidebar untuk menggunakan AI Consultant.", []
+
     # Build messages
     messages = [{"role": "system", "content": SYSTEM_PROMPT}]
     messages.extend(history)
