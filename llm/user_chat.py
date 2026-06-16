@@ -37,7 +37,7 @@ while True:
     
     user_prompt = f"""Customer Question : {query}
     
-    Context from Nusantara Connect:
+    Context from MixxComm:
     {context}
     """
     

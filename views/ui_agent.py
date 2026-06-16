@@ -7,7 +7,7 @@ def render_agent():
     st.markdown(
         '<div class="agent-greeting">'
         '<h3>Rini — AI Business Consultant</h3>'
-        '<p>Halo! Saya <b>Rini</b>, AI Business Consultant Nusantara Connect. '
+        '<p>Halo! Saya <b>Rini</b>, AI Business Consultant MixxComm. '
         'Saya bisa membantu Anda:</p>'
         '<p>'
         '<b>Menjawab pertanyaan</b> tentang perusahaan &amp; layanan<br>'
@@ -32,7 +32,7 @@ def render_agent():
         "Berapa churn rate pelanggan Fiber optic?",
         "Prediksi churn: Female, tenure 3, Fiber optic, Month-to-month",
         "Buatkan grafik churn rate by contract type",
-        "Apa layanan utama Nusantara Connect?",
+        "Apa layanan utama MixxComm?",
     ]
     selected_prompt = None
     for i, qp in enumerate(quick_prompts):

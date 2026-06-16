@@ -27,8 +27,8 @@ openai_emb_func = embedding_functions.OpenAIEmbeddingFunction(
 chroma_client = chromadb.PersistentClient(_CHROMA_DB_PATH)
 
 collections = chroma_client.get_or_create_collection(
-    name='nusantara_connect',
-    metadata={'description': 'Nusantara Connect Profile & Customer Data'},
+    name='mixxcomm',
+    metadata={'description': 'MixxComm Profile & Customer Data'},
     embedding_function=openai_emb_func
 )
 
@@ -176,5 +176,5 @@ def cosine_similarity(vector1, vector2):
     return similarity
 
 if collections.count() == 0:
-    add_docs_to_db(os.path.join(_DATA_DIR, 'nusantara_connect'))
+    add_docs_to_db(os.path.join(_DATA_DIR, 'mixxcomm'))
     add_csv_to_db(os.path.join(_DATA_DIR, 'train.csv'))

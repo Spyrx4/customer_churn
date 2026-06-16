@@ -1,8 +1,8 @@
-# Nusantara Connect — AI-Powered Customer Churn Ecosystem 🚀
+# MixxComm — AI-Powered Customer Churn Ecosystem 🚀
 
 **Turning 594,000+ data records into actionable business strategies.**
 
-Nusantara Connect adalah platform analitik dan prediksi *customer churn* yang dirancang untuk membantu tim manajemen memahami mengapa pelanggan pergi dan bagaimana cara menahannya. Platform ini mengintegrasikan *Machine Learning*, *Microservices Architecture*, dan *Generative AI* dalam satu ekosistem yang kohesif.
+MixxComm adalah platform analitik dan prediksi *customer churn* yang dirancang untuk membantu tim manajemen memahami mengapa pelanggan pergi dan bagaimana cara menahannya. Platform ini mengintegrasikan *Machine Learning*, *Microservices Architecture*, dan *Generative AI* dalam satu ekosistem yang kohesif.
 
 ---
 

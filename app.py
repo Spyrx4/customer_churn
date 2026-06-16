@@ -8,7 +8,7 @@ from views.ui_agent import render_agent
 
 # Page configuration
 st.set_page_config(
-    page_title="Customer Churn Dashboard",
+    page_title="MixxComm Churn Dashboard",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -63,7 +63,7 @@ filtered = df[mask].copy()
 st.sidebar.markdown(f"Total: {len(filtered):,} / {len(df):,} customers")
 
 # Main interface
-st.markdown("# Customer Churn Analytics")
+st.markdown("# MixxComm Churn Analytics")
 st.markdown('<p style="color:#94a3b8; margin-top:-10px;">Analitik & Prediksi Churn Pelanggan</p>', unsafe_allow_html=True)
 
 tabs = st.tabs(["Global Analytics", "Individual Prediction & Simulation", "Batch Prediction", "AI Consultant (Rini)"])
@@ -84,4 +84,4 @@ with tabs[3]:
 
 # Footer
 st.markdown("---")
-st.markdown('<p style="text-align:center; color:#64748b; font-size:13px;">Customer Churn Dashboard | 594K Records | XGBoost</p>', unsafe_allow_html=True)
+st.markdown('<p style="text-align:center; color:#64748b; font-size:13px;">MixxComm Dashboard | 594K Records | XGBoost</p>', unsafe_allow_html=True)

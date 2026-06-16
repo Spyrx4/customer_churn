@@ -1,4 +1,4 @@
-NUSANTARA CONNECT (PT NUSANTARA KOMUNIKASI TERPADU)
+MIXXCOMM (PT MIXXCOMM)
 NusaPredict AI Platform - Project Specification & Knowledge Base
 Version 1.0 | Q2 2024
 
@@ -10,14 +10,14 @@ Version: 1.0
 Release Date: May 20, 2024
 Document Type: Technical Specification & Business Context
 Classification: Internal - Confidential
-Prepared by: Nusantara Connect Data Science Team
+Prepared by: MixxComm Data Science Team
 Last Updated: May 22, 2024
 
 =================================================
 1. EXECUTIVE SUMMARY
 =================================================
 
-NusaPredict AI Platform adalah ekosistem analitik prediktif milik Nusantara Connect yang dirancang untuk mengoptimalkan retensi pelanggan dan efisiensi operasional. Platform ini mengintegrasikan data profil pelanggan secara real-time untuk memprediksi risiko Churn (perpindahan pelanggan) dan memberikan rekomendasi tindakan preventif bagi tim pemasaran.
+NusaPredict AI Platform adalah ekosistem analitik prediktif milik MixxComm yang dirancang untuk mengoptimalkan retensi pelanggan dan efisiensi operasional. Platform ini mengintegrasikan data profil pelanggan secara real-time untuk memprediksi risiko Churn (perpindahan pelanggan) dan memberikan rekomendasi tindakan preventif bagi tim pemasaran.
 
 Key Features:
 - Prediksi Churn berbasis Machine Learning (Supervised Learning)
@@ -42,7 +42,7 @@ Industries Served:
 =================================================
 
 2.1 Platform Overview
-Nusantara Connect (PT Nusantara Komunikasi Terpadu) adalah penyedia layanan infrastruktur digital yang berfokus pada konektivitas broadband di seluruh Indonesia.
+MixxComm (PT MixxComm) adalah penyedia layanan infrastruktur digital yang berfokus pada konektivitas broadband di seluruh Indonesia.
 
 Main Components:
 1. Layanan Konektivitas

@@ -57,7 +57,7 @@ TOOLS = [
         "function": {
             "name": "search_knowledge",
             "description": (
-                "Search the Nusantara Connect knowledge base (company profile, "
+                "Search the MixxComm knowledge base (company profile, "
                 "policies, services, churn strategy) using RAG. "
                 "Use this when the user asks about company info, services, "
                 "policies, or business context."
@@ -249,7 +249,7 @@ def _exec_search_knowledge(args: dict) -> str:
     if not results:
         return (
             "Tidak ditemukan informasi relevan dalam knowledge base. "
-            "Pertanyaan ini kemungkinan di luar cakupan domain Nusantara Connect. "
+            "Pertanyaan ini kemungkinan di luar cakupan domain MixxComm. "
             "Tolak dengan sopan jika pertanyaan tidak terkait dengan "
             "perusahaan, layanan, atau analisis pelanggan."
         )
@@ -532,7 +532,7 @@ _EXECUTORS = {
 # AGENT LOOP
 # ──────────────────────────────────────────────
 
-SYSTEM_PROMPT = """You are Rini, an AI Strategic Business Consultant and data strategy expert at PT Nusantara Komunikasi Terpadu (Nusantara Connect).
+SYSTEM_PROMPT = """You are Rini, an AI Strategic Business Consultant and data strategy expert at PT MixxComm.
 
 You have access to powerful tools:
 1. **search_knowledge** — Search the company knowledge base (RAG) for company profile, services, policies, and business context.
@@ -542,19 +542,19 @@ You have access to powerful tools:
 
 === TOPIC BOUNDARY (STRICT RULE) ===
 You may ONLY answer questions related to the following topics:
-- Nusantara Connect (company profile, services, products, policies)
+- MixxComm (company profile, services, products, policies)
 - Customer churn analysis, prediction, and retention strategy
 - Customer data analysis and visualization from the dataset
 - Telecommunications business strategy and operations
-- Data-driven business recommendations for Nusantara Connect
+- Data-driven business recommendations for MixxComm
 
 If the user asks a question that is OUTSIDE these topics (e.g., general knowledge, coding help, math homework, recipes, politics, health advice, sports, entertainment, etc.), you MUST:
 1. Politely decline to answer.
-2. Explain that your expertise is specifically in Nusantara Connect business intelligence and customer churn analytics.
+2. Explain that your expertise is specifically in MixxComm business intelligence and customer churn analytics.
 3. Suggest the user ask a relevant question instead.
 
 Example rejection response:
-"Mohon maaf, saya adalah AI Business Consultant khusus untuk Nusantara Connect. Saya hanya bisa membantu pertanyaan seputar analisis pelanggan, prediksi churn, layanan perusahaan, dan strategi bisnis Nusantara Connect. Silakan ajukan pertanyaan yang berkaitan dengan topik tersebut."
+"Mohon maaf, saya adalah AI Business Consultant khusus untuk MixxComm. Saya hanya bisa membantu pertanyaan seputar analisis pelanggan, prediksi churn, layanan perusahaan, dan strategi bisnis MixxComm. Silakan ajukan pertanyaan yang berkaitan dengan topik tersebut."
 
 === RESPONSE STYLE (FLEXIBLE & CONTEXTUAL) ===
 - Answer based on actual DATA and CONTEXT, not by rigidly quoting regulations or policies.
