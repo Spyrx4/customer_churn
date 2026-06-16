@@ -260,7 +260,7 @@ def _exec_search_knowledge(args: dict) -> str:
 
 
 def _exec_predict_churn(args: dict) -> str:
-    import batch_predict
+    from utils.ml_utils import predict_churn
 
     row = pd.DataFrame([{
         "gender": args["gender"],
@@ -285,7 +285,7 @@ def _exec_predict_churn(args: dict) -> str:
     }])
 
     try:
-        predictions, probabilities = batch_predict._batch_inference(row)
+        predictions, probabilities = predict_churn(row)
         pred = int(predictions[0])
         proba = float(probabilities[0])
         risk = "High" if proba >= 0.8 else "Medium" if proba >= 0.5 else "Low"
