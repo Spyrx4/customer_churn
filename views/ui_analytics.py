@@ -248,7 +248,7 @@ def render_analytics(filtered, churn_rate):
             api_key = st.session_state.get("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
             
             if not api_key:
-                st.warning("⚠️ Anda belum memasukkan API Key. Silakan masukkan API Key di menu sidebar sebelah kiri terlebih dahulu untuk dapat menggunakan fitur ini.")
+                st.warning("Anda belum memasukkan API Key. Silakan masukkan API Key di menu sidebar sebelah kiri terlebih dahulu untuk dapat menggunakan fitur ini.")
             else:
                 with st.spinner("AI Consultant sedang menyusun strategi..."):
                     from llm.agent import run_agent
@@ -266,6 +266,6 @@ def render_analytics(filtered, churn_rate):
                     except Exception as e:
                         error_msg = str(e).lower()
                         if "rate_limit" in error_msg or "insufficient_quota" in error_msg or "429" in error_msg:
-                            st.error(f"❌ Limit Token Terlampaui: Kuota atau saldo API Anda sudah habis. Silakan periksa akun API Anda.\n\nDetail: {e}")
+                            st.error(f"Limit Token Terlampaui: Kuota atau saldo API Anda sudah habis. Silakan periksa akun API Anda.\n\nDetail: {e}")
                         else:
-                            st.error(f"❌ Gagal memuat respons dari model LLM: {e}")
+                            st.error(f"Gagal memuat respons dari model LLM: {e}")
