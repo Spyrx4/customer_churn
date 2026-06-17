@@ -20,6 +20,7 @@ if "sim_data" not in st.session_state:
 # Custom styling
 st.markdown("""
 <style>
+    .block-container { padding-top: 2rem; }
     .stApp { background: linear-gradient(135deg, #0f0c29 0%, #1a1a3e 50%, #24243e 100%); }
     div[data-testid="stMetric"] {
         background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
