@@ -80,3 +80,4 @@ DL.yml
 
 # Exceptions
 !artifacts/reports/re_training_val_xgboost_ros_classification_report.png
+!artifacts/reports/re_training_train_xgboost_ros_classification_report.png

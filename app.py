@@ -108,11 +108,18 @@ with tabs[4]:
     st.markdown("### 📊 Dokumentasi Performa Model (XGBoost)")
     st.markdown("Tab ini khusus menyimpan rincian performa teknis dari model Machine Learning yang Anda gunakan.")
     
-    with st.expander("📋 Classification Report (Validation Data)"):
-        st.image("artifacts/reports/re_training_val_xgboost_ros_classification_report.png", use_container_width=True)
+    with st.expander("📋 Classification Report (Train & Validation)"):
+        r1, r2 = st.columns(2)
+        with r1:
+            st.markdown("**Validation Data**")
+            st.image("artifacts/reports/re_training_val_xgboost_ros_classification_report.png", use_container_width=True)
+        with r2:
+            st.markdown("**Train Data**")
+            st.image("artifacts/reports/re_training_train_xgboost_ros_classification_report.png", use_container_width=True)
+            
         st.markdown("""
         **Deskripsi/Analisis:**
-        *(Anda bisa menuliskan penjelasan detail mengenai presisi, recall, dan f1-score model Anda di sini nanti)*
+        *(Anda bisa menuliskan penjelasan detail mengenai komparasi presisi, recall, dan f1-score antara data Train dan Validation di sini nanti)*
         """)
         
     with st.expander("📉 Confusion Matrix"):
