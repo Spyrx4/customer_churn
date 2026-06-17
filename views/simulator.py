@@ -47,17 +47,22 @@ def inject_simulator():
     with col_input:
         st.write("Manual Input Strategi")
         with st.form("simulator_form"):
-            default_monthly = float(sim_data.get('MonthlyCharges', 70.0))
-            default_contract = sim_data.get('Contract', 'Month-to-month')
-            default_tech = sim_data.get('TechSupport', 'No')
-            default_sec = sim_data.get('OnlineSecurity', 'No')
-            default_tenure = int(sim_data.get('tenure', 12))
+            if "sim_monthly" not in st.session_state:
+                st.session_state["sim_monthly"] = float(sim_data.get('MonthlyCharges', 70.0))
+            if "sim_contract" not in st.session_state:
+                st.session_state["sim_contract"] = sim_data.get('Contract', 'Month-to-month')
+            if "sim_tech" not in st.session_state:
+                st.session_state["sim_tech"] = sim_data.get('TechSupport', 'No')
+            if "sim_sec" not in st.session_state:
+                st.session_state["sim_sec"] = sim_data.get('OnlineSecurity', 'No')
+            if "sim_tenure" not in st.session_state:
+                st.session_state["sim_tenure"] = int(sim_data.get('tenure', 12))
 
-            new_monthly = st.number_input("Monthly Charges ($)", min_value=0.0, max_value=150.0, value=float(default_monthly), key="sim_monthly")
-            new_contract = st.selectbox("Contract Type", contract_opts, index=get_idx(contract_opts, default_contract), key="sim_contract")
-            new_tech = st.selectbox("Tech Support", yes_no_inet, index=get_idx(yes_no_inet, default_tech), key="sim_tech")
-            new_sec = st.selectbox("Online Security", yes_no_inet, index=get_idx(yes_no_inet, default_sec), key="sim_sec")
-            new_tenure = st.number_input("Tenure (bulan)", min_value=0, max_value=72, value=int(default_tenure), key="sim_tenure")
+            new_monthly = st.number_input("Monthly Charges ($)", min_value=0.0, max_value=150.0, key="sim_monthly")
+            new_contract = st.selectbox("Contract Type", contract_opts, key="sim_contract")
+            new_tech = st.selectbox("Tech Support", yes_no_inet, key="sim_tech")
+            new_sec = st.selectbox("Online Security", yes_no_inet, key="sim_sec")
+            new_tenure = st.number_input("Tenure (bulan)", min_value=0, max_value=72, key="sim_tenure")
             
             submitted = st.form_submit_button("Simulasikan", type="primary", use_container_width=True)
 
