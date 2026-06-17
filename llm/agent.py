@@ -27,14 +27,7 @@ def get_client():
         api_key = st.session_state.get("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
     if not api_key:
         return None
-        
-    base_url = st.session_state.get("LLM_BASE_URL") or "https://api.openai.com/v1"
-    
-    # Menambahkan pengecualian untuk google / gemini melalui OpenAI interface jika base_url mengandung googleapis
-    if "googleapis.com" in base_url and "OPENAI_API_KEY" not in os.environ:
-        pass # Not strictly necessary if the API key is passed directly
-        
-    return OpenAI(api_key=api_key, base_url=base_url)
+    return OpenAI(api_key=api_key)
 
 # ---------- lazy-loaded resources ----------
 _df_cache = None
@@ -618,11 +611,9 @@ def run_agent(user_message: str, history: list) -> tuple[str, list]:
     charts = []
     max_iterations = 6  # safety: prevent infinite loops
 
-    model_name = st.session_state.get("LLM_MODEL_NAME") or "gpt-4o-mini"
-
     for _ in range(max_iterations):
         response = _client.chat.completions.create(
-            model=model_name,
+            model="gpt-4o-mini",
             messages=messages,
             tools=TOOLS,
             tool_choice="auto",
