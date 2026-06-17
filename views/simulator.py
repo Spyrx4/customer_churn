@@ -66,13 +66,22 @@ def inject_simulator():
     
     # Construct dataframe for AFTER
     after_data = sim_data.copy()
+    
+    orig_monthly = float(sim_data.get('MonthlyCharges', 0))
+    orig_tenure = int(sim_data.get('tenure', 0))
+    calc_total = sim_data.get('TotalCharges', 0)
+    
+    # Hanya hitung ulang TotalCharges jika MonthlyCharges atau tenure diubah
+    if new_monthly != orig_monthly or new_tenure != orig_tenure:
+        calc_total = new_monthly * new_tenure if new_tenure > 0 else new_monthly
+
     after_data.update({
         'MonthlyCharges': new_monthly,
         'Contract': new_contract,
         'TechSupport': new_tech,
         'OnlineSecurity': new_sec,
         'tenure': new_tenure,
-        'TotalCharges': new_monthly * new_tenure if new_tenure > 0 else new_monthly
+        'TotalCharges': calc_total
     })
     raw_after = pd.DataFrame([after_data])
 
