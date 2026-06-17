@@ -244,18 +244,28 @@ def render_analytics(filtered, churn_rate):
     st.markdown('<p class="dashboard-subheader">AI Strategic Recommendations</p>', unsafe_allow_html=True)
     if churn_count > 0:
         if st.button("Generate Strategic Recommendations", type="primary", width='stretch'):
-            with st.spinner("AI Consultant sedang menyusun strategi..."):
-                from llm.agent import run_agent
-                prompt = (
-                    f"Berdasarkan data saat ini, faktor penyebab churn tertinggi adalah: "
-                    f"Contract: {h_contract} ({p_contract:.1%}), Payment Method: {h_pay} ({p_pay:.1%}), "
-                    f"dan Internet Service: {h_inet} ({p_inet:.1%}). "
-                    f"Berikan rekomendasi strategis bisnis tingkat makro untuk menekan churn pada kelompok ini. "
-                    f"Format dalam poin-poin yang profesional tanpa emoji."
-                )
-                try:
-                    ai_response, _ = run_agent(prompt, [])
-                    st.success("Strategi Berhasil Dibuat!")
-                    st.markdown(ai_response)
-                except Exception as e:
-                    st.error(f"Gagal memuat rekomendasi: {e}")
+            import os
+            api_key = st.session_state.get("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
+            
+            if not api_key:
+                st.warning("⚠️ Anda belum memasukkan API Key. Silakan masukkan API Key di menu sidebar sebelah kiri terlebih dahulu untuk dapat menggunakan fitur ini.")
+            else:
+                with st.spinner("AI Consultant sedang menyusun strategi..."):
+                    from llm.agent import run_agent
+                    prompt = (
+                        f"Berdasarkan data saat ini, faktor penyebab churn tertinggi adalah: "
+                        f"Contract: {h_contract} ({p_contract:.1%}), Payment Method: {h_pay} ({p_pay:.1%}), "
+                        f"dan Internet Service: {h_inet} ({p_inet:.1%}). "
+                        f"Berikan rekomendasi strategis bisnis tingkat makro untuk menekan churn pada kelompok ini. "
+                        f"Format dalam poin-poin yang profesional tanpa emoji."
+                    )
+                    try:
+                        ai_response, _ = run_agent(prompt, [])
+                        st.success("Strategi Berhasil Dibuat!")
+                        st.markdown(ai_response)
+                    except Exception as e:
+                        error_msg = str(e).lower()
+                        if "rate_limit" in error_msg or "insufficient_quota" in error_msg or "429" in error_msg:
+                            st.error(f"❌ Limit Token Terlampaui: Kuota atau saldo API Anda sudah habis. Silakan periksa akun API Anda.\n\nDetail: {e}")
+                        else:
+                            st.error(f"❌ Gagal memuat respons dari model LLM: {e}")
