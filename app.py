@@ -84,16 +84,11 @@ mask = (df["gender"].isin(gender_filter) & df["Contract"].isin(contract_filter) 
 filtered = df[mask].copy()
 st.sidebar.markdown(f"Total: {len(filtered):,} / {len(df):,} customers")
 
-st.sidebar.markdown("---")
-with st.sidebar.expander("📊 Model Metrics (XGBoost)"):
-    st.image("artifacts/reports/re_training_val_xgboost_ros_classification_report.png", 
-             caption="Classification Report", 
-             use_container_width=True)
 # Main interface
 st.markdown("# MixxComm Churn Analytics")
 st.markdown('<p style="color:#94a3b8; margin-top:-10px;">Analitik & Prediksi Churn Pelanggan</p>', unsafe_allow_html=True)
 
-tabs = st.tabs(["Global Analytics", "Individual Prediction & Simulation", "Batch Prediction", "AI Consultant (Rini)"])
+tabs = st.tabs(["Global Analytics", "Individual Prediction & Simulation", "Batch Prediction", "AI Consultant (Rini)", "Model Performance"])
 
 with tabs[0]:
     churn_count = (filtered["Churn"] == "Yes").sum()
@@ -108,6 +103,24 @@ with tabs[2]:
 
 with tabs[3]:
     render_agent()
+
+with tabs[4]:
+    st.markdown("### 📊 Dokumentasi Performa Model (XGBoost)")
+    st.markdown("Tab ini khusus menyimpan rincian performa teknis dari model Machine Learning yang Anda gunakan.")
+    
+    with st.expander("📋 Classification Report (Validation Data)"):
+        st.image("artifacts/reports/re_training_val_xgboost_ros_classification_report.png", use_container_width=True)
+        st.markdown("""
+        **Deskripsi/Analisis:**
+        *(Anda bisa menuliskan penjelasan detail mengenai presisi, recall, dan f1-score model Anda di sini nanti)*
+        """)
+        
+    with st.expander("📉 Confusion Matrix"):
+        st.info("💡 Anda bisa memasukkan baris kode `st.image('path_gambar.png')` di sini setelah gambar Confusion Matrix Anda siap.")
+        st.markdown("""
+        **Deskripsi/Analisis:**
+        *(Anda bisa menuliskan penjelasan detail mengenai True Positives, False Positives, dll. di sini nanti)*
+        """)
 
 # Footer
 st.markdown("---")
