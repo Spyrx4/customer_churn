@@ -122,6 +122,23 @@ with tabs[4]:
         *(Anda bisa menuliskan penjelasan detail mengenai True Positives, False Positives, dll. di sini nanti)*
         """)
 
+    with st.expander("📈 ROC AUC & Evaluasi Metrik Lanjutan"):
+        st.markdown("Berdasarkan hasil *training* model **XGBoost (ROS)** pada log terakhir, berikut adalah skor evaluasinya:")
+        
+        c1, c2, c3 = st.columns(3)
+        c1.metric(label="Validation ROC AUC", value="0.902", delta="Train: 0.956", delta_color="off")
+        c2.metric(label="Validation PR AUC", value="0.724", delta="Train: 0.943", delta_color="off")
+        c3.metric(label="Validation Recall", value="0.923", delta="Train: 0.998", delta_color="off")
+        
+        st.markdown("""
+        **Deskripsi/Analisis:**
+        * **ROC AUC (0.902):** Model ini memiliki kemampuan yang sangat baik (sangat akurat) dalam membedakan antara pelanggan yang akan *churn* dan yang tidak.
+        * **PR AUC (0.724):** Cukup solid mengingat kondisi data churn pada umumnya tidak seimbang (*imbalanced*).
+        * **Recall (0.923):** Ini adalah kekuatan utama model ini! Model berhasil mendeteksi ~92.3% dari seluruh pelanggan yang *benar-benar akan churn* (sangat sensitif).
+        
+        *(Anda dapat mengubah atau menambahkan deskripsi interpretasi skor ini di dalam file `app.py`)*
+        """)
+
 # Footer
 st.markdown("---")
 st.markdown('<p style="text-align:center; color:#64748b; font-size:13px;">MixxComm Dashboard | 594K Records | XGBoost</p>', unsafe_allow_html=True)
