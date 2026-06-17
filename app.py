@@ -105,11 +105,10 @@ with tabs[3]:
     render_agent()
 
 with tabs[4]:
-    st.markdown("### 📊 Dokumentasi Performa Model (XGBoost)")
-    st.markdown("Tab ini khusus menyimpan rincian performa teknis dari model Machine Learning yang Anda gunakan.")
-    st.info('💡 **Filosofi Bisnis & Performa Model:**\n\n"Model kami sengaja dioptimasi untuk Recall (92.3%). Fokus kami adalah meminimalkan risiko \'False Negative\'—situasi di mana sistem gagal mendeteksi pelanggan yang akan pergi. Meskipun terdapat trade-off pada Precision (47.4%), secara bisnis hal ini lebih menguntungkan karena biaya retensi jauh lebih rendah dibandingkan biaya kerugian akibat kehilangan pelanggan (Churn)."')
+    st.markdown("###Dokumentasi Performa Model (XGBoost)")
+    st.info('**Filosofi Bisnis & Performa Model:**\n\n"Model kami sengaja dioptimasi untuk Recall (92.3%). Fokus kami adalah meminimalkan risiko \'False Negative\'—situasi di mana sistem gagal mendeteksi pelanggan yang akan pergi. Meskipun terdapat trade-off pada Precision (47.4%), secara bisnis hal ini lebih menguntungkan karena biaya retensi jauh lebih rendah dibandingkan biaya kerugian akibat kehilangan pelanggan (Churn)."')
     
-    with st.expander("📋 Classification Report (Train & Validation)"):
+    with st.expander("Classification Report (Train & Validation)"):
         r1, r2 = st.columns(2)
         with r1:
             st.markdown("**Validation Data**")
@@ -125,7 +124,7 @@ with tabs[4]:
         Ini berarti model akan memunculkan sejumlah *False Positives* (memprediksi churn pada pelanggan yang sebenarnya aman), namun kita berhasil menekan angka bahaya *False Negatives* (kebocoran pelanggan) hingga tingkat minimal.
         """)
         
-    with st.expander("📈 ROC AUC & Evaluasi Metrik Lanjutan"):
+    with st.expander("ROC AUC & Evaluasi Metrik Lanjutan"):
         st.markdown("Berdasarkan hasil *training* model **XGBoost (ROS)** pada log terakhir, berikut adalah skor evaluasinya:")
         
         c1, c2, c3 = st.columns(3)
