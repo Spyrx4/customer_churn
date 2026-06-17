@@ -84,6 +84,11 @@ mask = (df["gender"].isin(gender_filter) & df["Contract"].isin(contract_filter) 
 filtered = df[mask].copy()
 st.sidebar.markdown(f"Total: {len(filtered):,} / {len(df):,} customers")
 
+st.sidebar.markdown("---")
+with st.sidebar.expander("📊 Model Metrics (XGBoost)"):
+    st.image("artifacts/reports/re_training_val_xgboost_ros_classification_report.png", 
+             caption="Classification Report", 
+             use_container_width=True)
 # Main interface
 st.markdown("# MixxComm Churn Analytics")
 st.markdown('<p style="color:#94a3b8; margin-top:-10px;">Analitik & Prediksi Churn Pelanggan</p>', unsafe_allow_html=True)
