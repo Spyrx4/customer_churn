@@ -125,13 +125,6 @@ with tabs[4]:
         Ini berarti model akan memunculkan sejumlah *False Positives* (memprediksi churn pada pelanggan yang sebenarnya aman), namun kita berhasil menekan angka bahaya *False Negatives* (kebocoran pelanggan) hingga tingkat minimal.
         """)
         
-    with st.expander("📉 Confusion Matrix"):
-        st.info("💡 Anda bisa memasukkan baris kode `st.image('path_gambar.png')` di sini setelah gambar Confusion Matrix Anda siap.")
-        st.markdown("""
-        **Deskripsi/Analisis:**
-        *(Anda bisa menuliskan penjelasan detail mengenai True Positives, False Positives, dll. di sini nanti)*
-        """)
-
     with st.expander("📈 ROC AUC & Evaluasi Metrik Lanjutan"):
         st.markdown("Berdasarkan hasil *training* model **XGBoost (ROS)** pada log terakhir, berikut adalah skor evaluasinya:")
         
