@@ -66,11 +66,18 @@ df = load_data()
 
 # Sidebar filters
 st.sidebar.markdown("## Configuration")
-user_api_key = st.sidebar.text_input("OpenAI API Key", type="password", help="Paste your OpenAI API Key here for the AI Consultant demo.")
+user_api_key = st.sidebar.text_input("API Key", type="password", help="Masukkan API Key (OpenAI, OpenRouter, dll).")
+base_url = st.sidebar.text_input("Base URL", value="https://api.openai.com/v1", help="Ganti jika menggunakan proxy seperti OpenRouter atau OneAPI yang mendukung Anthropic/Google/Xiaomi.")
+model_name = st.sidebar.text_input("Model Name", value="gpt-4o-mini", help="Ketik nama model yang ingin digunakan.")
+
 if user_api_key:
     import os
     os.environ["OPENAI_API_KEY"] = user_api_key
     st.session_state["OPENAI_API_KEY"] = user_api_key
+if base_url:
+    st.session_state["LLM_BASE_URL"] = base_url
+if model_name:
+    st.session_state["LLM_MODEL_NAME"] = model_name
 
 st.sidebar.markdown("---")
 st.sidebar.markdown("## Filters")

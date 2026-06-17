@@ -5,6 +5,15 @@ import joblib
 import os
 
 import shap
+import warnings
+
+# Mengabaikan warning versi (scikit-learn & xgboost) saat me-load pickle dari versi yang sedikit berbeda
+warnings.filterwarnings("ignore", category=UserWarning)
+try:
+    from sklearn.exceptions import InconsistentVersionWarning
+    warnings.filterwarnings("ignore", category=InconsistentVersionWarning)
+except ImportError:
+    pass
 
 TENURE_BINS = [0, 6, 12, 24, 60, np.inf]
 TENURE_LABELS = list(range(len(TENURE_BINS) - 1))
