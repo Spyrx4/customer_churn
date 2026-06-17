@@ -213,4 +213,4 @@ def cosine_similarity(vector1, vector2):
 
 if collections.count() == 0:
     add_docs_to_db(os.path.join(_DATA_DIR, 'mixxcomm'))
-    add_csv_to_db(os.path.join(_DATA_DIR, 'train.csv'))
+    # add_csv_to_db(os.path.join(_DATA_DIR, 'train.csv'))  # Dihapus agar tidak membebani RAG dengan dataset mentah
