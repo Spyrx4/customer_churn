@@ -51,23 +51,6 @@ def render_analytics(filtered, churn_rate):
         c2.info(f"**Payment:** {h_pay} ({p_pay:.1%})")
         c3.info(f"**Internet:** {h_inet} ({p_inet:.1%})")
         
-        st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("Generate Strategic Recommendations", type="primary", width='stretch'):
-            with st.spinner("AI Consultant sedang menyusun strategi..."):
-                from llm.agent import run_agent
-                prompt = (
-                    f"Berdasarkan data saat ini, faktor penyebab churn tertinggi adalah: "
-                    f"Contract: {h_contract} ({p_contract:.1%}), Payment Method: {h_pay} ({p_pay:.1%}), "
-                    f"dan Internet Service: {h_inet} ({p_inet:.1%}). "
-                    f"Berikan rekomendasi strategis bisnis tingkat makro untuk menekan churn pada kelompok ini. "
-                    f"Format dalam poin-poin yang profesional tanpa emoji."
-                )
-                try:
-                    ai_response, _ = run_agent(prompt, [])
-                    st.success("Strategi Berhasil Dibuat!")
-                    st.markdown(ai_response)
-                except Exception as e:
-                    st.error(f"Gagal memuat rekomendasi: {e}")
     else:
         st.info("No churn data available for current filter.")
 
@@ -256,3 +239,23 @@ def render_analytics(filtered, churn_rate):
     fig_scatter.update_layout(**PLOTLY_LAYOUT, height=450,
                                xaxis_title="Tenure (bulan)", yaxis_title="Total Charges ($)")
     st.plotly_chart(fig_scatter, width='stretch')
+
+    st.markdown("---")
+    st.markdown('<p class="dashboard-subheader">AI Strategic Recommendations</p>', unsafe_allow_html=True)
+    if churn_count > 0:
+        if st.button("Generate Strategic Recommendations", type="primary", width='stretch'):
+            with st.spinner("AI Consultant sedang menyusun strategi..."):
+                from llm.agent import run_agent
+                prompt = (
+                    f"Berdasarkan data saat ini, faktor penyebab churn tertinggi adalah: "
+                    f"Contract: {h_contract} ({p_contract:.1%}), Payment Method: {h_pay} ({p_pay:.1%}), "
+                    f"dan Internet Service: {h_inet} ({p_inet:.1%}). "
+                    f"Berikan rekomendasi strategis bisnis tingkat makro untuk menekan churn pada kelompok ini. "
+                    f"Format dalam poin-poin yang profesional tanpa emoji."
+                )
+                try:
+                    ai_response, _ = run_agent(prompt, [])
+                    st.success("Strategi Berhasil Dibuat!")
+                    st.markdown(ai_response)
+                except Exception as e:
+                    st.error(f"Gagal memuat rekomendasi: {e}")
