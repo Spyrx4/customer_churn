@@ -61,6 +61,7 @@ artifacts/logs/
 
 # reports
 artifacts/reports/*.png
+!artifacts/reports/re_training_val_xgboost_ros_classification_report.png
 
 # env config
 .env
@@ -76,3 +77,6 @@ DL.yml
 *.bmp
 
 DL.yml
+
+# Exceptions
+!artifacts/reports/re_training_val_xgboost_ros_classification_report.png
