@@ -222,24 +222,21 @@ def _render_results(result_df: pd.DataFrame):
         ].sort_values(sort_col, ascending=sort_asc)
 
         st.markdown(
-            f'<p style="color:#94a3b8;">Menampilkan {len(display_df):,} dari {total:,} baris</p>',
+            f'<p style="color:#94a3b8;">Menampilkan 100 baris teratas (dari {len(display_df):,} baris yang sesuai filter)</p>',
             unsafe_allow_html=True,
         )
 
-        MAX_STYLED_ROWS = 10_000
-        if len(display_df) <= MAX_STYLED_ROWS:
-            def highlight_churn(row):
-                if row["Churn_Label"] == "Yes":
-                    return ["background-color: rgba(244,63,94,0.15)"] * len(row)
-                return [""] * len(row)
+        display_head = display_df.head(100)
 
-            styled = display_df.style.apply(highlight_churn, axis=1).format(
-                {"Churn_Probability": "{:.2%}"}
-            )
-            st.dataframe(styled, width='stretch', height=500)
-        else:
-            st.info(f"Data terlalu besar untuk styling ({len(display_df):,} baris). Menampilkan tabel biasa.")
-            st.dataframe(display_df, width='stretch', height=500)
+        def highlight_churn(row):
+            if row["Churn_Label"] == "Yes":
+                return ["background-color: rgba(244,63,94,0.15)"] * len(row)
+            return [""] * len(row)
+
+        styled = display_head.style.apply(highlight_churn, axis=1).format(
+            {"Churn_Probability": "{:.2%}"}
+        )
+        st.dataframe(styled, width='stretch', height=500)
 
         st.markdown("---")
         dl1, dl2, dl3 = st.columns(3)

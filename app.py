@@ -46,8 +46,21 @@ st.markdown("""
 # Data & Model loading
 @st.cache_data
 def load_data():
-    df = pd.read_csv("data/train.csv")
-    return df.drop(columns=["id"], errors="ignore")
+    df = pd.read_parquet("data/train.parquet")
+    df = df.drop(columns=["id"], errors="ignore")
+    
+    # Memori optimasi dengan downcasting
+    for col in df.columns:
+        col_type = df[col].dtype
+        if col_type == 'object':
+            if len(df[col].unique()) / len(df[col]) < 0.5:
+                df[col] = df[col].astype('category')
+        elif 'int' in str(col_type):
+            df[col] = pd.to_numeric(df[col], downcast='integer')
+        elif 'float' in str(col_type):
+            df[col] = pd.to_numeric(df[col], downcast='float')
+            
+    return df
 
 df = load_data()
 
