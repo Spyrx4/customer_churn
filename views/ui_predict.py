@@ -12,41 +12,44 @@ def render_prediction():
     yes_no = ["Yes", "No"]
 
     # UI Components (Data Input)
-    st.markdown("### Customer Profile")
-    cp1, cp2, cp3, cp4, cp5 = st.columns(5)
-    with cp1: gender = st.selectbox("Gender", ["Male", "Female"], key="pred_gender")
-    with cp2: seniorCtzn = int(st.selectbox("Senior Citizen", options=[0, 1], format_func=lambda x: "Yes"if x == 1 else "No", key="pred_senior"))
-    with cp3: partner = st.selectbox("Partner", yes_no, key="pred_partner")
-    with cp4: dependents = st.selectbox("Dependents", yes_no, key="pred_dep")
-    with cp5: tenure = st.slider("Tenure (bulan)", 0, 72, 12, key="pred_tenure")
+    with st.form("prediction_input_form"):
+        st.markdown("### Customer Profile")
+        cp1, cp2, cp3, cp4, cp5 = st.columns(5)
+        with cp1: gender = st.selectbox("Gender", ["Male", "Female"], key="pred_gender")
+        with cp2: seniorCtzn = int(st.selectbox("Senior Citizen", options=[0, 1], format_func=lambda x: "Yes"if x == 1 else "No", key="pred_senior"))
+        with cp3: partner = st.selectbox("Partner", yes_no, key="pred_partner")
+        with cp4: dependents = st.selectbox("Dependents", yes_no, key="pred_dep")
+        with cp5: tenure = st.number_input("Tenure (bulan)", min_value=0, max_value=72, value=12, key="pred_tenure")
 
-    st.markdown("### Services")
-    sv1, sv2, sv3 = st.columns(3)
-    with sv1:
-        phoneService = st.selectbox("Phone Service", yes_no, key="pred_phone")
-        multipleLines = st.selectbox("Multiple Lines", ["No", "Yes", "No phone service"], key="pred_multi")
-        internetservice = st.selectbox("Internet Service", ["DSL", "Fiber optic", "No"], key="pred_inet")
-    with sv2:
-        onlineSecurity = st.selectbox("Online Security", ["Yes", "No", "No internet service"], key="pred_sec")
-        onlineBackup = st.selectbox("Online Backup", ["No", "Yes", "No internet service"], key="pred_bkp")
-        deviceProtect = st.selectbox("Device Protection", ["Yes", "No", "No internet service"], key="pred_dev")
-    with sv3:
-        techSupp = st.selectbox("Tech Support", ["Yes", "No", "No internet service"], key="pred_tech")
-        streamingTv = st.selectbox("Streaming TV", ["No", "Yes", "No internet service"], key="pred_tv")
-        streamingMov = st.selectbox("Streaming Movies", ["No", "Yes", "No internet service"], key="pred_mov")
+        st.markdown("### Services")
+        sv1, sv2, sv3 = st.columns(3)
+        with sv1:
+            phoneService = st.selectbox("Phone Service", yes_no, key="pred_phone")
+            multipleLines = st.selectbox("Multiple Lines", ["No", "Yes", "No phone service"], key="pred_multi")
+            internetservice = st.selectbox("Internet Service", ["DSL", "Fiber optic", "No"], key="pred_inet")
+        with sv2:
+            onlineSecurity = st.selectbox("Online Security", ["Yes", "No", "No internet service"], key="pred_sec")
+            onlineBackup = st.selectbox("Online Backup", ["No", "Yes", "No internet service"], key="pred_bkp")
+            deviceProtect = st.selectbox("Device Protection", ["Yes", "No", "No internet service"], key="pred_dev")
+        with sv3:
+            techSupp = st.selectbox("Tech Support", ["Yes", "No", "No internet service"], key="pred_tech")
+            streamingTv = st.selectbox("Streaming TV", ["No", "Yes", "No internet service"], key="pred_tv")
+            streamingMov = st.selectbox("Streaming Movies", ["No", "Yes", "No internet service"], key="pred_mov")
 
-    st.markdown("### Contract & Payment")
-    py1, py2, py3, py4 = st.columns(4)
-    with py1: contract = st.selectbox("Contract", ["Month-to-month", "One year", "Two year"], key="pred_contract")
-    with py2: paperlessBill = st.selectbox("Paperless Billing", yes_no, key="pred_paper")
-    with py3: payMeth = st.selectbox("Payment Method", ["Electronic check", "Mailed check", "Credit card (automatic)", "Bank transfer (automatic)"], key="pred_pay")
-    with py4: monthCharges = st.number_input("Monthly Charges ($)", min_value=0.0, max_value=120.0, value=74.0, key="pred_monthly")
+        st.markdown("### Contract & Payment")
+        py1, py2, py3, py4 = st.columns(4)
+        with py1: contract = st.selectbox("Contract", ["Month-to-month", "One year", "Two year"], key="pred_contract")
+        with py2: paperlessBill = st.selectbox("Paperless Billing", yes_no, key="pred_paper")
+        with py3: payMeth = st.selectbox("Payment Method", ["Electronic check", "Mailed check", "Credit card (automatic)", "Bank transfer (automatic)"], key="pred_pay")
+        with py4: monthCharges = st.number_input("Monthly Charges ($)", min_value=0.0, max_value=120.0, value=74.0, key="pred_monthly")
 
-    totalCharges = st.number_input("Total Charges ($)", min_value=0.0, max_value=10000.0, value=1433.0, key="pred_total")
+        totalCharges = st.number_input("Total Charges ($)", min_value=0.0, max_value=10000.0, value=1433.0, key="pred_total")
 
-    st.markdown("---")
+        st.markdown("---")
 
-    if st.button("Predict Churn", width='stretch', type="primary"):
+        submitted = st.form_submit_button("Predict Churn", type="primary", use_container_width=True)
+
+    if submitted:
         # Payload prediksi
         payload = {
             "gender": gender,

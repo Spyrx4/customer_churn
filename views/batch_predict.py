@@ -189,32 +189,36 @@ def _render_results(result_df: pd.DataFrame):
 
     # table
     with tab_table:
-        fc1, fc2, fc3, fc4 = st.columns(4)
-        with fc1:
-            label_filter = st.multiselect(
-                "Filter Prediksi", options=["Yes", "No"], default=["Yes", "No"],
-                key="batch_label_filter",
-            )
-        with fc2:
-            risk_filter = st.multiselect(
-                "Filter Risk Level", options=["High", "Medium", "Low"],
-                default=["High", "Medium", "Low"], key="batch_risk_filter",
-            )
-        with fc3:
-            prob_filter = st.slider("Filter Probabilitas Churn", 0.0, 1.0, (0.0, 1.0), key="batch_prob_filter")
-        with fc4:
-            id_col = "id" if "id" in result_df.columns else "row_index"
-            sort_col = st.selectbox(
-                "Urutkan berdasarkan", options=["Churn_Probability", id_col],
-                key="batch_sort",
-            )
-            sort_asc = st.checkbox("Ascending", value=False, key="batch_asc")
+        with st.form("table_filter_form"):
+            fc1, fc2, fc3, fc4 = st.columns(4)
+            with fc1:
+                label_filter = st.multiselect(
+                    "Filter Prediksi", options=["Yes", "No"], default=["Yes", "No"],
+                    key="batch_label_filter",
+                )
+            with fc2:
+                risk_filter = st.multiselect(
+                    "Filter Risk Level", options=["High", "Medium", "Low"],
+                    default=["High", "Medium", "Low"], key="batch_risk_filter",
+                )
+            with fc3:
+                prob_filter_min = st.number_input("Min Probabilitas", min_value=0.0, max_value=1.0, value=0.0, step=0.05, key="batch_prob_min")
+                prob_filter_max = st.number_input("Max Probabilitas", min_value=0.0, max_value=1.0, value=1.0, step=0.05, key="batch_prob_max")
+            with fc4:
+                id_col = "id" if "id" in result_df.columns else "row_index"
+                sort_col = st.selectbox(
+                    "Urutkan", options=["Churn_Probability", id_col],
+                    key="batch_sort",
+                )
+                sort_asc = st.checkbox("Ascending", value=False, key="batch_asc")
+            
+            st.form_submit_button("Terapkan Filter", use_container_width=True)
 
         display_df = result_df[
             result_df["Churn_Label"].isin(label_filter)
             & result_df["Risk_Level"].isin(risk_filter)
-            & (result_df["Churn_Probability"] >= prob_filter[0])
-            & (result_df["Churn_Probability"] <= prob_filter[1])
+            & (result_df["Churn_Probability"] >= prob_filter_min)
+            & (result_df["Churn_Probability"] <= prob_filter_max)
         ].sort_values(sort_col, ascending=sort_asc)
 
         st.markdown(
@@ -365,23 +369,26 @@ def _render_results(result_df: pd.DataFrame):
         if len(display_df) == 0:
             st.warning("Tidak ada pelanggan yang dipilih untuk simulasi. Sesuaikan filter di Tabel Hasil.")
         else:
-            col_presets, col_input = st.columns([1, 1])
+            with st.form("batch_sim_form"):
+                col_presets, col_input = st.columns([1, 1])
 
-            with col_presets:
-                st.write("**Strategy Presets**")
-                use_promo = st.checkbox("Promo Paket Hemat (Diskon 20% Monthly Charges)", key="bsim_promo")
-                use_loyalty = st.checkbox("Loyalty Lock (Ubah kontrak ke Two Year)", key="bsim_loyalty")
-                use_techsec = st.checkbox("Tech-Security Bundle (Aktifkan Tech Support & Online Security)", key="bsim_techsec")
+                with col_presets:
+                    st.write("**Strategy Presets**")
+                    use_promo = st.checkbox("Promo Paket Hemat (Diskon 20% Monthly Charges)", key="bsim_promo")
+                    use_loyalty = st.checkbox("Loyalty Lock (Ubah kontrak ke Two Year)", key="bsim_loyalty")
+                    use_techsec = st.checkbox("Tech-Security Bundle (Aktifkan Tech Support & Online Security)", key="bsim_techsec")
 
-            with col_input:
-                st.write("**Manual Overrides**")
-                apply_monthly = st.checkbox("Ubah Monthly Charges menjadi nilai tetap", key="bsim_m_check")
-                new_monthly = st.number_input("Nilai Monthly Charges ($)", min_value=0.0, value=70.0, disabled=not apply_monthly)
-                
-                apply_contract = st.checkbox("Ubah Kontrak", key="bsim_c_check")
-                new_contract = st.selectbox("Tipe Kontrak", ["Month-to-month", "One year", "Two year"], disabled=not apply_contract)
+                with col_input:
+                    st.write("**Manual Overrides**")
+                    apply_monthly = st.checkbox("Ubah Monthly Charges menjadi nilai tetap", key="bsim_m_check")
+                    new_monthly = st.number_input("Nilai Monthly Charges ($)", min_value=0.0, value=70.0)
+                    
+                    apply_contract = st.checkbox("Ubah Kontrak", key="bsim_c_check")
+                    new_contract = st.selectbox("Tipe Kontrak", ["Month-to-month", "One year", "Two year"])
 
-            if st.button("Jalankan Batch Simulasi", type="primary", width="stretch"):
+                submitted_sim = st.form_submit_button("Jalankan Batch Simulasi", type="primary", use_container_width=True)
+
+            if submitted_sim:
                 with st.spinner("Menjalankan simulasi prediksi untuk batch ini..."):
                     sim_df = display_df.copy()
                     

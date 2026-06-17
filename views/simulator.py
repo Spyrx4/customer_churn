@@ -31,42 +31,35 @@ def inject_simulator():
     with col_presets:
         st.write("Strategy Presets")
         if st.button("Promo Paket Hemat", width='stretch', help="Diskon 20% Monthly Charges"):
-            st.session_state["sim_promo_hemat"] = True
+            st.session_state["sim_monthly"] = float(sim_data.get('MonthlyCharges', 70.0)) * 0.8
         if st.button("Loyalty Lock", width='stretch', help="Ubah kontrak ke Two Year"):
-            st.session_state["sim_loyalty_lock"] = True
+            st.session_state["sim_contract"] = "Two year"
         if st.button("Tech-Security Bundle", width='stretch', help="Aktifkan Tech Support & Online Security"):
-            st.session_state["sim_tech_sec"] = True
+            if sim_data.get('InternetService', 'No') != 'No':
+                st.session_state["sim_tech"] = "Yes"
+                st.session_state["sim_sec"] = "Yes"
             
         if st.button("Reset Simulator", type="secondary", width='stretch'):
-            st.session_state.pop("sim_promo_hemat", None)
-            st.session_state.pop("sim_loyalty_lock", None)
-            st.session_state.pop("sim_tech_sec", None)
+            for k in ["sim_monthly", "sim_contract", "sim_tech", "sim_sec", "sim_tenure"]:
+                st.session_state.pop(k, None)
             st.rerun()
 
     with col_input:
         st.write("Manual Input Strategi")
-        
-        # Apply presets directly to default UI values if triggered
-        default_monthly = float(sim_data.get('MonthlyCharges', 70.0))
-        if st.session_state.get("sim_promo_hemat"):
-            default_monthly *= 0.8
-            
-        default_contract = sim_data.get('Contract', 'Month-to-month')
-        if st.session_state.get("sim_loyalty_lock"):
-            default_contract = 'Two year'
-            
-        default_tech = sim_data.get('TechSupport', 'No')
-        default_sec = sim_data.get('OnlineSecurity', 'No')
-        if st.session_state.get("sim_tech_sec"):
-            if sim_data.get('InternetService', 'No') != 'No':
-                default_tech = 'Yes'
-                default_sec = 'Yes'
+        with st.form("simulator_form"):
+            default_monthly = float(sim_data.get('MonthlyCharges', 70.0))
+            default_contract = sim_data.get('Contract', 'Month-to-month')
+            default_tech = sim_data.get('TechSupport', 'No')
+            default_sec = sim_data.get('OnlineSecurity', 'No')
+            default_tenure = int(sim_data.get('tenure', 12))
 
-        new_monthly = st.slider("Monthly Charges ($)", 0.0, 150.0, float(default_monthly), key="sim_monthly")
-        new_contract = st.selectbox("Contract Type", contract_opts, index=get_idx(contract_opts, default_contract), key="sim_contract")
-        new_tech = st.selectbox("Tech Support", yes_no_inet, index=get_idx(yes_no_inet, default_tech), key="sim_tech")
-        new_sec = st.selectbox("Online Security", yes_no_inet, index=get_idx(yes_no_inet, default_sec), key="sim_sec")
-        new_tenure = st.slider("Tenure (bulan)", 0, 72, int(sim_data.get('tenure', 12)), key="sim_tenure")
+            new_monthly = st.number_input("Monthly Charges ($)", min_value=0.0, max_value=150.0, value=float(default_monthly), key="sim_monthly")
+            new_contract = st.selectbox("Contract Type", contract_opts, index=get_idx(contract_opts, default_contract), key="sim_contract")
+            new_tech = st.selectbox("Tech Support", yes_no_inet, index=get_idx(yes_no_inet, default_tech), key="sim_tech")
+            new_sec = st.selectbox("Online Security", yes_no_inet, index=get_idx(yes_no_inet, default_sec), key="sim_sec")
+            new_tenure = st.number_input("Tenure (bulan)", min_value=0, max_value=72, value=int(default_tenure), key="sim_tenure")
+            
+            submitted = st.form_submit_button("Simulasikan", type="primary", use_container_width=True)
 
     # Construct dataframe for BEFORE
     raw_before = pd.DataFrame([sim_data])
