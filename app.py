@@ -120,7 +120,9 @@ with tabs[4]:
             
         st.markdown("""
         **Deskripsi/Analisis:**
-        *(Anda bisa menuliskan penjelasan detail mengenai komparasi presisi, recall, dan f1-score antara data Train dan Validation di sini nanti)*
+        Berdasarkan *Classification Report* di atas, terlihat jelas eksekusi dari strategi *trade-off* kita pada kelas 'Yes' (Churn). 
+        Untuk mencapai **Recall yang sangat tinggi (92.3%)** dalam menangkap pelanggan berisiko, model mengorbankan **Precision menjadi 47.4%**. 
+        Ini berarti model akan memunculkan sejumlah *False Positives* (memprediksi churn pada pelanggan yang sebenarnya aman), namun kita berhasil menekan angka bahaya *False Negatives* (kebocoran pelanggan) hingga tingkat minimal.
         """)
         
     with st.expander("📉 Confusion Matrix"):
@@ -140,11 +142,9 @@ with tabs[4]:
         
         st.markdown("""
         **Deskripsi/Analisis:**
-        * **ROC AUC (0.902):** Model ini memiliki kemampuan yang sangat baik (sangat akurat) dalam membedakan antara pelanggan yang akan *churn* dan yang tidak.
-        * **PR AUC (0.724):** Cukup solid mengingat kondisi data churn pada umumnya tidak seimbang (*imbalanced*).
-        * **Recall (0.923):** Ini adalah kekuatan utama model ini! Model berhasil mendeteksi ~92.3% dari seluruh pelanggan yang *benar-benar akan churn* (sangat sensitif).
-        
-        *(Anda dapat mengubah atau menambahkan deskripsi interpretasi skor ini di dalam file `app.py`)*
+        * **ROC AUC (0.902):** Skor yang sangat tinggi ini mengindikasikan bahwa model secara fundamental sangat kuat dalam membedakan karakteristik pelanggan Churn dan Non-Churn.
+        * **PR AUC (0.724):** Mengingat fokus kita pada kelas minoritas melalui teknik *Random Over-Sampling*, metrik PR AUC ini mencerminkan dinamika riil antara Precision yang direlakan turun demi memaksimalkan Recall.
+        * **Recall (0.923):** Ini adalah *North Star Metric* (Metrik Utama) kita. Model berhasil mengidentifikasi 92.3% dari seluruh ancaman *churn*, memastikan tim retensi memiliki cakupan target yang sangat luas untuk diselamatkan.
         """)
 
 # Footer
